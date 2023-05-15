@@ -1,0 +1,87 @@
+﻿@{
+    ViewData["Title"] = "ASN Imports";
+
+}
+
+
+<h2 class="content-block">File Management <i class="dx-icon dx-icon-spinright"></i> ASN Imports</h2>
+<p class="page-desc">
+    Advance Shipping Notice (ASN) records communicate the details for each package.  
+    Below is a list of the ASN files uploaded by customer and location.
+</p>
+
+<div class="content-block">
+
+    @(Html.DevExtreme().SelectBox()
+        .Name("SubClientName")
+        .DataSource(d => d.Mvc().Controller("Common").LoadAction("GetSubClientSelectBoxData"))
+        .Placeholder("Choose Customer\\Location")
+        .DisplayExpr("Description")
+        .DeferRendering(false)
+        .ValueExpr("Name").DataSourceOptions(opt =>
+        {
+            //if (User.GetSite() != SiteConstants.AllSites)
+            //{
+            //    opt.Filter($"['SiteName', '=', '{User.GetSite()}']");
+            //}
+            if (User.IsSubClientWebAdministrator() || User.IsSubClientWebUser())
+            {
+                // we only show one item in this list
+                opt.Filter($"['Name', '=', '{User.GetSubClient()}']");
+            }
+            else if (User.IsClientWebAdministrator() || User.IsClientWebUser() || User.IsClientWebFinancialUser())
+            {
+                // for the admin and client user gets filtered list by clientName
+                opt.Filter($"['ClientName', '=', '{User.GetClient()}']");
+            }
+        })
+        .OnValueChanged("PPG.asnImports.onSubClientValueChanged")
+    )
+
+</div>
+
+<div class="content-block">
+    <div class="dx-card" id="asnImportsCard">
+        <div class="ppg-container-cols">
+            <div style="grid-column: 1 / span 12;">
+                @(Html.DevExtreme().DataGrid<ASNImportsModel>()
+                    .ID("asnImportsGrid")
+                    .DataSource(d => d.Mvc()
+                    .Controller("FileManagement")
+                    .LoadAction(nameof(ParcelPrepGov.Web.Features.FileManagement.FileManagementController.GetASNImports))
+                    .LoadParams(new { subClientName = new JS("PPG.asnImports.getSelectedSubClient") }))
+                    .ShowBorders(true)
+                    .AllowColumnResizing(true)
+                    .ColumnResizingMode(ColumnResizingMode.Widget)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.LocalCreateDate).DataType(GridColumnDataType.DateTime).Format(Format.ShortDateShortTime).SortOrder(SortOrder.Desc);
+                        columns.AddFor(m => m.Username).DataType(GridColumnDataType.String).Width(120);
+                        columns.AddFor(m => m.JobName).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.FileName).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.NumberOfRecords).DataType(GridColumnDataType.Number).Width(150);
+                        columns.AddFor(m => m.IsSuccessful).DataType(GridColumnDataType.Boolean).Width(120);
+                        columns.AddFor(m => m.ErrorMessage).DataType(GridColumnDataType.String);
+                    })
+                    .Paging(paging => paging.PageSize(10))
+                    .Pager(pager =>
+                    {
+                        pager.ShowPageSizeSelector(true);
+                        pager.AllowedPageSizes(new[] { 5, 10, 20 });
+                        pager.ShowInfo(true);
+                    })
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ppg/ppg.file-management-asn-imports.bundle.min.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.asnImports.init();
+        });
+    </script>
+}

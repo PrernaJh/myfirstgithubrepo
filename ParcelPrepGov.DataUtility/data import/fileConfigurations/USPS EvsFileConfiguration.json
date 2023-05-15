@@ -1,0 +1,10 @@
+{
+  "siteName": "GLOBAL",
+  "configurationName": "UspsEvsFileJobQueue",
+  "fileDescription": "USPS eVs File",
+  "scheduleType": "ENDOFDAY",
+  "webJobType": "USPS_EVS",
+  "isEnabled": true,
+  "createDate": "2020-07-29T16:45:04.6650256-06:00",
+  "partitionKey": "GLOBAL"
+}

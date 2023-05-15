@@ -1,0 +1,172 @@
+﻿<Project Sdk="Microsoft.NET.Sdk"> 
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>netcoreapp3.1</TargetFrameworks>
+    <IsPackable>false</IsPackable>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <RootNamespace>ParcelPrepGov.DataUtility</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="DevExpress.Xpo" Version="20.1.6" />
+    <PackageReference Include="Microsoft.Azure.Cosmos" Version="3.23.0" />
+    <PackageReference Include="Microsoft.Azure.CosmosDB.BulkExecutor" Version="2.3.0-preview2" />
+    <PackageReference Include="Microsoft.Azure.DocumentDB" Version="2.1.3" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\MMS.Web.Domain\MMS.Web.Domain.csproj" />
+    <ProjectReference Include="..\PackageTracker.AzureExtensions\PackageTracker.AzureExtensions.csproj" />
+    <ProjectReference Include="..\PackageTracker.CosmosDbExtensions\PackageTracker.CosmosDbExtensions.csproj" />
+    <ProjectReference Include="..\PackageTracker.Data\PackageTracker.Data.csproj" />
+    <ProjectReference Include="..\PackageTracker.Domain\PackageTracker.Domain.csproj" />
+    <ProjectReference Include="..\PackageTracker.EodService\PackageTracker.EodService.csproj" />
+    <ProjectReference Include="..\ParcelPrepGov.Reports.Data\ParcelPrepGov.Reports.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="*.cmd">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include=".\data import\reports\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\settings\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\clients\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\subClients\*" CopyToOutputDirectory="Always" />
+	  <None Include=".\data import\clientFacilities\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\binMaps\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\bins\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\fileConfigurations\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\jobOptions\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\rates\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\returnOptions\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\sequences\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\serviceRuleExtensions\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\serviceRules\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\sites\*" CopyToOutputDirectory="Always" />
+	  <None Include=".\data import\geoDesc\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\zipMaps\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\zipOverrides\*" CopyToOutputDirectory="Always" />
+    <None Include=".\data import\zoneMaps\*" CopyToOutputDirectory="Always" />
+    <None Include=".\stored procedures\*" CopyToOutputDirectory="Always" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="data import\clientFacilities\OPTUM_OV.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\clientFacilities\OPTUM_SA.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\clientFacilities\OPTUM_PB.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\clientFacilities\OPTUM_CB.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\clientFacilities\OPTUM_CH.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\clientFacilities\OPTUM_OP.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\clients\OPTUM.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\fileConfigurations\InvoiceExpenseFileConfiguration.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Charleston_PMOD_CONTAINER.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Chelmsford_PMOD_CONTAINER.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Chicago_PMOD_CONTAINER.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Dallas_PMOD_CONTAINER.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Leavenworth_PMOD_CONTAINER.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Murfreesboro_PMOD_CONTAINER.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Tucson_PMOD_CONTAINER.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Tucson_SINGLEPACKAGE - Copy %282%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Tucson_SINGLEPACKAGE - Copy %283%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Tucson_SINGLEPACKAGE - Copy %284%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Tucson_SINGLEPACKAGE - Copy %285%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Tucson_SINGLEPACKAGE - Copy %286%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Dallas_SINGLEPACKAGE.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\sequences\Tucson_SINGLEPACKAGE.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\DALC_Chicago.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPTUMCHARLESTON - Copy %282%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPTUMCHARLESTON - Copy %283%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPTUMCHARLESTON - Copy %284%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPTUMCHARLESTON - Copy %285%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPTUMCHARLESTON - Copy %286%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPTUMCHICAGO.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPTUMCHARLESTON.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPUS_chicago - Copy %282%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPUS_chicago - Copy %283%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPUS_chicago - Copy %284%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPUS_chicago - Copy %285%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPUS_chicago - Copy %286%29.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="data import\subClients\OPUS_Chelmsford.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="sql scripts\" />
+  </ItemGroup>        
+  </Project>

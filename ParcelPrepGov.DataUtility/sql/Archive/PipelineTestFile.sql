@@ -1,0 +1,1 @@
+﻿PRINT N'##vso[task.logissue type=warning] PackageDatasets Count: ' SELECT COUNT(*) FROM [dbo].[PackageDatasets];

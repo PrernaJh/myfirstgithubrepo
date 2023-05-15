@@ -1,0 +1,126 @@
+﻿@{
+    ViewData["Title"] = "End of Day Files";
+
+}
+
+
+<h2 class="content-block">File Management <i class="dx-icon dx-icon-spinright"></i> End of Day Files</h2>
+<div class="content-block">
+    <div class="dx-card" id="endOfDayFilesCard">
+
+        <div class="ppg-container-cols">
+            <div style="grid-column: 1 / span 12;">
+                <div>
+                    @{
+                        if (User.IsInRole(PPGRole.Supervisor) || User.IsInRole(PPGRole.GeneralManager))
+                        {
+                            @(Html.DevExtreme().Button()
+                            .ID("generateFilesButton")
+                            .Text("Generate Files")
+                            .Type(ButtonType.Success)
+                            .OnClick("PPG.endOfDayFiles.generateFilesButton_onClick"))
+                        }
+                        else
+                        {
+                            @(Html.DevExtreme().Button()
+                            .ID("generateFilesButton")
+                            .Text("Generate Files")
+                            .Type(ButtonType.Success)
+                            .Disabled(true))
+                        }
+                    }
+
+                </div>
+            </div>
+            <div style="grid-column: 1 / span 12;">
+                @(Html.DevExtreme().DataGrid<EODJobHistoryModel>()
+                    .ID("gridContainer")
+                    .DataSource(d => d.Mvc()
+                    .Controller("FileManagement")
+                    .LoadAction(nameof(ParcelPrepGov.Web.Features.FileManagement.FileManagementController.GetEODJobHistory)))
+                    .ShowBorders(true)
+
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.CreateDate).DataType(GridColumnDataType.DateTime).Format(Format.ShortDateShortTime).SortOrder(SortOrder.Desc);
+                        columns.AddFor(m => m.Username).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.JobName).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.FileName).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.IsSuccessful).DataType(GridColumnDataType.Boolean);
+                        columns.AddFor(m => m.ErrorMessage).DataType(GridColumnDataType.String);
+                    })
+
+                    .Paging(paging => paging.PageSize(10))
+                    .Pager(pager =>
+                    {
+                        pager.ShowPageSizeSelector(true);
+                        pager.AllowedPageSizes(new[] { 5, 10, 20 });
+                        pager.ShowInfo(true);
+                    })
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
+@(Html.DevExtreme().Popup()
+        .ID("confirmPopup")
+        .Width(600)
+        .Height(250)
+        .ShowTitle(true)
+        .Title("End Of Day Files")
+        .Visible(false)
+        .DragEnabled(false)
+        .CloseOnOutsideClick(false)
+        .ContentTemplate(new TemplateName("confirm-action-template")))
+
+@using (Html.DevExtreme().NamedTemplate("confirm-action-template"))
+{
+    <div class="ppg-container-cols">
+        <div style="grid-column: 1 / span 12;">
+            <div class="ppg-label">Are you sure you wish to continue? This action cannot be undone.</div>
+        </div>
+        <div style="grid-column: 1 / span 6;">
+            @(Html.DevExtreme().Button()
+                        .ID("cancel-button")
+                        .Text("Cancel")
+                        .Type(ButtonType.Normal)
+                        .OnClick("PPG.endOfDayFiles.confirmCancel"))
+        </div>
+        <div style="grid-column: 7 / span 6;">
+            <div class="right">
+                @(Html.DevExtreme().Button()
+                        .ID("confirm-button")
+                        .Text("Generate Files")
+                        .Type(ButtonType.Success)
+                        .OnClick("PPG.endOfDayFiles.confirmContinue"))
+            </div>
+        </div>
+    </div>
+}
+
+@(Html.DevExtreme().Popup()
+        .ID("result-popup")
+        .Width(850)
+        .Height(550)
+        .ShowTitle(true)
+        .Title("End Of Day Files")
+        .Visible(false)
+        .DragEnabled(false)
+        .OnHidden(@<text>function(e){location.reload();}</text>)
+        .CloseOnOutsideClick(false)
+        .ContentTemplate(new TemplateName("action-result-template")))
+@using (Html.DevExtreme().NamedTemplate("action-result-template"))
+{
+    <div id="resultList"></div>
+}
+
+@section Scripts {
+    <script src="~/js/ppg/ppg.file-management-end-of-day-files.bundle.min.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.endOfDayFiles.init();
+        });
+    </script>
+}

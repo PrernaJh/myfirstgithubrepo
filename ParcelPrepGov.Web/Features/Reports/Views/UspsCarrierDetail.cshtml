@@ -1,0 +1,216 @@
+﻿@{
+    ViewData["Title"] = "USPS Carrier Detail  Report";
+
+}
+
+<h2 class="content-block">Reporting<i class="dx-icon dx-icon-spinright"></i>USPS Carrier Detail Report</h2>
+<p class="page-desc">
+    USPS Carrier Detail Report
+</p>
+
+<div class="content-block">
+    <div class="dx-card">
+        <div class="ppg-container-cols">
+            <div class="dx-col-2">
+                <label>Subclient</label>
+                @(Html.DevExtreme().SelectBox()
+                .ID("subClientName")
+                .Name("SubClientName")
+                .DataSource(d => d.Mvc().Controller("Common").LoadAction("GetSubClientSelectBoxData"))
+                .Placeholder("Name")
+                .DisplayExpr("Description")
+                .DeferRendering(false)
+                .ValueExpr("Name")
+                .OnValueChanged("PPG.reports.onSubClientValueChanged")
+                .Width(280))
+            </div>
+            <div class="dx-col-2">
+                <label>Manifest From Date</label>
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestStartDate")
+                .Name("ManifestStartDate")
+                .OnValueChanged("PPG.reports.onManifestStartDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now.AddDays(-6))
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+            </div>
+            <div class="dx-col-2">
+                <label>Manifest To Date</label>
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestEndDate")
+                .Name("ManifestEndDate")
+                .OnValueChanged("PPG.reports.onManifestEndDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now)
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+		                .ID("runReportButton")
+				        .Text("Run Report")
+                        .ValidationGroup("SubClientName")
+				        .OnClick("PPG.reports.onRunUspsCarrierDetailReport")
+                         )
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+                    .ID("btnExport")
+                    .Text("Export")
+                    .Disabled(false)
+                    .Icon("xlsxfile")
+                    .ValidationGroup("SubClientName")
+                    .OnClick("PPG.reports.uspsCarrierDetailExportFile")
+                    )
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-block">
+    <div class="dx-card" id="reportsCard">
+        <div class="ppg-container-cols">
+            <div class="ppg-container-cols" style="display:none;" id="reportFilter">
+                <div class="dx-col-2">
+                    Container Type:
+                    <div id="ddlFilterByProduct" style="width:300px; height:70px;"></div>
+                </div> 
+                <div class="dx-col-2" style="text-align:right">
+                    @(Html.DevExtreme().Button()
+                    .ID("btnClearFilter")
+                    .Text("Clear Filter")
+                    .OnClick("PPG.reports.clearFilter")
+                    )
+            
+                </div>
+            </div>
+            <div style="grid-column: 1 / span 12;">
+                @(Html.DevExtreme().Button().Text("Clear Filters").ID("clearFilterBtn").OnClick("PPG.reports.clearFilters"))
+                <br />
+                <br />
+                @(Html.DevExtreme().DataGrid<ParcelPrepGov.Reports.Models.SprocModels.UspsCarrierDetailMaster>()
+                    .ID("reportsGrid")
+                    .DataSource(d => d.Mvc()
+                    .Controller("Reports")
+                    .LoadAction(nameof(ParcelPrepGov.Web.Features.Reports.ReportsController.GetUspsCarrierDetailData))
+                    .LoadParams(new
+                    {
+                        subClientName = new JS("PPG.reports.getSelectedSubClient"),
+                        startDate = new JS("PPG.reports.getManifestStartDate"),
+                        endDate= new JS("PPG.reports.getManifestEndDate")
+                    }))
+                    .OnDataErrorOccurred("PPG.reports.runAndExportButtonReenable")
+                    .ShowBorders(true)
+                    .HeaderFilter(h => h.Visible(true).AllowSearch(true))
+                    .LoadPanel(x => x.Enabled(true))
+                    .Width("100%")
+                        .Height(600)
+                        .ShowBorders(true)
+                        .ShowRowLines(true)
+                        .ShowColumnLines(true)
+                        .Scrolling(scrolling =>
+                        {
+                            scrolling.Mode(GridScrollingMode.Virtual);
+                            scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual);
+                            scrolling.ShowScrollbar(ShowScrollbarMode.Always);
+                        })
+                    .AllowColumnResizing(true)
+                    .ColumnResizingMode(ColumnResizingMode.Widget)
+                    .ColumnAutoWidth(true)
+                    .Columns(columns =>
+                    {
+                    columns.AddFor(m => m.LOCATION).DataType(GridColumnDataType.String).Caption("SITE").CssClass("minimal").AllowFiltering(false);
+                    columns.AddFor(m => m.MANIFEST_DATE).DataType(GridColumnDataType.Date).CssClass("minimal").AllowFiltering(false).SortOrder(SortOrder.Desc).CalculateCellValue(@<text>
+                                function(data) {
+                                    return data.MANIFEST_DATE_STRING;
+                                }
+                            </text>);
+                        columns.AddFor(m => m.ENTRY_UNIT_KEY).Caption("SITE KEY").DataType(GridColumnDataType.String).CssClass("minimal");
+                        columns.AddFor(m => m.ENTRY_UNIT_NAME).DataType(GridColumnDataType.String).CssClass("minimal");
+                        columns.AddFor(m => m.ENTRY_UNIT_CSZ).DataType(GridColumnDataType.String).CssClass("minimal");
+                        columns.AddFor(m => m.ENTRY_UNIT_TYPE).DataType(GridColumnDataType.String).CssClass("minimal");
+                        columns.AddFor(m => m.PRODUCT).Caption("CONTAINER TYPE").DataType(GridColumnDataType.String).CssClass("minimal");
+                        columns.AddFor(m => m.TOTAL_CONT).DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+                    })
+                    .Summary(s => s.TotalItems(items => { items.AddFor(m => m.LOCATION).SummaryType(SummaryType.Count); }))
+                    .MasterDetail(md =>
+                        md.Enabled(true)
+                        .Template(new TemplateName("gridContainer-details-tab1-gridTemplate")))
+
+                )
+
+                @using (Html.DevExtreme().NamedTemplate("gridContainer-details-tab1-gridTemplate"))
+                {
+                    @(Html.DevExtreme().DataGrid<ParcelPrepGov.Reports.Models.SprocModels.UspsCarrierDetailDetail>()
+                        .OnCellPrepared("cell_prepared")
+                        .ColumnAutoWidth(true)
+                        .AllowColumnResizing(true)
+                        .ShowBorders(true)
+                        .Paging(paging => paging.PageSize(5))
+                        .Pager(pager =>
+                        {
+                            pager.ShowPageSizeSelector(true);
+                            pager.AllowedPageSizes(new[] { 5, 10, 20, 50, 100 });
+                            pager.ShowInfo(true);
+                        })
+                        .Columns(columns =>
+                        {
+                        columns.AddFor(m => m.LOCATION).DataType(GridColumnDataType.String).Caption("SITE").CssClass("minimal");
+                        columns.AddFor(m => m.MANIFEST_DATE).DataType(GridColumnDataType.Date).CssClass("minimal").SortOrder(SortOrder.Desc).CalculateCellValue(@<text>
+                                function(data) {
+                                    return data.MANIFEST_DATE_STRING;
+                                }
+                            </text>);
+                            columns.AddFor(m => m.ENTRY_UNIT_KEY).Caption("SITE KEY").DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.ENTRY_UNIT_NAME).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.ENTRY_UNIT_CSZ).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.ENTRY_UNIT_TYPE).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.PRODUCT).Caption("CONTAINER TYPE").DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.TRACKING_NUMBER).DataType(GridColumnDataType.String).CssClass("minimal").CalculateCellValue(@<text>
+                                function(data) {
+                                    return PPG.reports.formatTrackingHyperLink(data);
+                                }
+                            </text>);
+                        })
+
+                        .DataSource(d => d.Mvc()
+                        .Controller("Reports")
+                        .LoadAction(nameof(ParcelPrepGov.Web.Features.Reports.ReportsController.GetUspsCarrierDetailBySingleId))
+                        .LoadParams(new {
+                            subClientName = new JS("PPG.reports.getSelectedSubClient"),
+                            startDate = new JS("PPG.reports.getManifestStartDate"),
+                            endDate = new JS("PPG.reports.getManifestEndDate"),
+                            id = new JS("data.ID")
+                        }))
+                    )
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/ppg/ppg.reports-reports.bundle.min.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.reports.init('Usps Carrier Detail');
+        });
+
+        var dataGrid,
+            taskIdEditor;
+
+        function cell_prepared(options) {
+            options.cellElement.html(options.value);
+        }
+
+    </script>
+
+}

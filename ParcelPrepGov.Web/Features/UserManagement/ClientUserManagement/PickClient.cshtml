@@ -1,0 +1,25 @@
+﻿@model List<string>
+
+
+<div class="content">
+    <h2 class="content-block">User Management - Pick Client</h2>
+
+    <div class="list-container content-block">
+        @foreach (var item in Model)
+        {
+            <div class="list-item">
+                @Html.ActionLink(item, "Client", "ClientUserManagement", new { id = item })
+                <br />
+            </div>
+        }
+
+        @if (User.IsAdministrator() || User.IsSystemAdministrator())
+        {
+            <div class="list-item">
+                @Html.ActionLink("All Clients", "Client", "ClientUserManagement", new { id = "All" })
+                <br />
+            </div>
+        }
+
+    </div>
+</div>

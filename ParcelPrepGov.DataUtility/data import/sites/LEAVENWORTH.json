@@ -1,0 +1,80 @@
+{
+  "siteName": "LEAVENWORTH",
+  "eodGroup": "EOD_LEAVENWORTH",
+  "zip": "66048",
+  "zipPlusFour": "",
+  "description": "FSC LEAVENWORTH",
+  "permitNumber": "7999",
+  "shipperAccount": "4800",
+  "mailProducerMid": "901581565",
+  "mailProducerCrid": "15345458",
+  "sackMailerId": "901581593",
+  "sackCrid": "13529793",
+  "palletMailerId": "901581584",
+  "palletCrid": "15345458",
+  "pmodPalletPermitNumber": "24500",
+  "alternateCarrierBarcodePrefix": "",
+  "isEnabled": true,
+  "fullAddress": "FSC LEAVENWORTH 3450 S. 4TH St LEAVENWORTH KS 66048",
+  "addressLineOne": "3450 S. 4TH ST",
+  "addressLineTwo": "",
+  "city": "LEAVENWORTH",
+  "state": "KS",
+  "timeZone": "CENTRAL",
+  "uspsPermitNo": "",
+  "uspsPaymentMethod": "",
+  "uspsPermitNoZip": "",
+  "uspsPostageType": "",
+  "uspsCsscNo": "",
+  "uspsCsscProductNo": "",
+  "uspsApiUserId": "535TECMA0117",
+  "uspsApiSourceId": "TEC Mailing Solutions, LLC",
+  "upsShipperAttentionName": "FSC",
+  "upsShipperPhone": "9999999999",
+  "evsId": "5",
+  "fedExCredentials": {
+    "apiKey": "IkjDxnBRabdoIwrDPNVNkrSV3pjIMFqmVcpsH6d3J1M=",
+    "apiPassword": "2DiWC25iqbUP59SevWCuXOTCxkOGJ0nhlE/ooP2593E=",
+    "accountNumber": "510087100",
+    "meterNumber": "114002162"
+  },
+  "binOverrides": [
+    {
+      "shippingCarrier": "USPS",
+      "shippingMethod": "FIRST_CLASS",
+      "binCode": "F60-Z-FC"
+    },
+    {
+      "shippingCarrier": "USPS",
+      "shippingMethod": "PRIORITY_MAIL",
+      "binCode": "P60-Z-PM"
+    },
+    {
+      "shippingCarrier": "UPS",
+      "shippingMethod": "",
+      "binCode": "UPS-BIN"
+    },
+    {
+      "shippingCarrier": "FEDEX",
+      "shippingMethod": "",
+      "binCode": "FEDEX-BIN"
+    }
+  ],
+  "criticalAlertEmailList": [
+    "bstabler@tecmailing.com"
+  ],
+  "criticalAlertSmsList": [],
+  "eodSummaryEmailList": [
+    "bstabler@tecmailing.com"
+  ],
+  "siteCustomData": [
+    {
+      "customDataType": "MERCURYGATE",
+      "customData": "GENCO MMS LEAVENWORTH,3450 S. 4TH ST,,LEAVENWORTH,KS,66048"
+    }
+  ],
+  "schedules": [],
+  "partitionKey": "none",
+  "createDate": "2020-10-22T10:56:53.3232308-05:00",
+  "isDatasetProcessed": false
+}

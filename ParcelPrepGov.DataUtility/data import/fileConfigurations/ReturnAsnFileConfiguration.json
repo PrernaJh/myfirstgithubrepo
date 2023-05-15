@@ -1,0 +1,10 @@
+{
+    "siteName": "GLOBAL",
+    "configurationName": "ReturnAsnFileJobQueue",
+    "fileDescription": "Return Asn File",
+    "scheduleType": "ENDOFDAY",
+    "webJobType": "RETURN_ASN",
+    "isEnabled": true,
+    "createDate": "2020-02-28T16:45:04.6650256-06:00",
+    "partitionKey": "GLOBAL"
+}

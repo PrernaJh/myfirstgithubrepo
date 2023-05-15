@@ -1,0 +1,126 @@
+﻿/*#region ppg-container-cols*/
+.ppg-container-cols {
+    display: grid;
+    grid-template-columns: repeat(12, 1fr);
+    /*grid-gap: 10px;*/
+    grid-column-gap: 1em;
+    grid-row-gap: 1em;
+}
+
+    .ppg-container-cols > div {
+        padding: 10px;
+    }
+
+    /*debug*/
+/*    .ppg-container-cols > div {
+        border: dashed 1px #c0c0c0;
+        background-color: #f5f5f5;
+    }*/
+
+/*#endregion*/
+
+    /*#region popups*/
+    /*#region ppg-container-rows-main-footer*/
+    .ppg-container-rows-main-footer {
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-row-gap: 1em;
+        min-height: 100%;
+        grid-template-areas: "main" "footer";
+        grid-template-rows: 1fr auto;
+    }
+
+    .ppg-container-rows-main-footer main {
+        grid-area: main;
+    }
+
+    .ppg-container-rows-main-footer footer {
+        grid-area: footer;
+    }
+
+/*#endregion*/
+
+/*#region ppg-container-rows-nav-main-footer*/
+.ppg-container-rows-nav-main-footer {
+    display: grid;
+    grid-row-gap: 1em;
+    min-height: 100%;
+    grid-template-areas: "nav" "main" "footer";
+    grid-template-rows: auto 1fr auto;
+}
+
+    .ppg-container-rows-nav-main-footer nav {
+        grid-area: nav;
+    }
+
+    .ppg-container-rows-nav-main-footer main {
+        grid-area: main;
+    }
+
+    .ppg-container-rows-nav-main-footer footer {
+        grid-area: footer;
+    }
+    /*#endregion*/
+
+    /*#endregion*/
+
+/*#region common*/
+
+    .ppg-container-cols input,
+    .ppg-container-rows-main-footer input,
+    .ppg-container-rows-nav-main-footer input {
+        width: 100%;
+    }
+
+.right-down {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    align-content: end;
+    justify-items: end
+}
+
+.left-down {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    align-content: end;
+    justify-items: start
+}
+
+.center-down {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    align-content: end;
+    justify-items: center
+}
+
+.center {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    justify-items: center
+}
+
+.right {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    justify-items: right
+}
+
+form {
+    height: 100%;
+    width: 100%
+}
+
+/*#endregion*/
+
+#gridFilterContainer {
+    display: grid;
+    height: 100%;
+    width: 100%;
+    align-content: end;
+    justify-items: end
+}

@@ -1,0 +1,8 @@
+﻿/* Package Tracker Web Portal */
+/* custom css */
+
+.background-img-globe {
+    background-image: url(/images/globewithlights.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+}

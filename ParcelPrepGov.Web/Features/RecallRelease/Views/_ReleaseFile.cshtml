@@ -1,0 +1,36 @@
+﻿<form id="uploadFormRelease" enctype="multipart/form-data">
+    <div class="ppg-container-rows-main-footer">
+        <main>
+            <div class="ppg-container-cols">
+                <div style="grid-column: 1 / span 12;">
+                    <div class="ppg-label">Release Multiple Packages</div>
+                    @(Html.DevExtreme().FileUploader()
+                            .ID("releaseFileUploader")
+                            .Name("releaseFile")
+                            .SelectButtonText("Choose File")
+                            .LabelText("")
+                            .Accept("text/csv")
+                            .UploadMode(FileUploadMode.UseForm)
+                            .AllowedFileExtensions(new[] { ".csv" })
+                            .OnValueChanged("PPG.release.releaseFileUploader_onValueChanged"))
+                    <span class="note">Allowed file extensions: <span>.csv</span>.</span>
+                    
+                </div>
+            </div>
+        </main>
+        <footer>
+            <div class="ppg-container-cols">
+                <div style="grid-column: 1 / span 12;" class="right">
+                    @(Html.DevExtreme().Button()
+                            .ID("submitFilereleaseButton")
+                            .Text("release")
+                            .Type(ButtonType.Success)
+                            .Disabled(true)
+                            .UseSubmitBehavior(false)
+                            .OnClick("PPG.release.submitFilereleaseButton_onClick")
+                    )
+                </div>
+            </div>
+        </footer>
+    </div>
+</form>

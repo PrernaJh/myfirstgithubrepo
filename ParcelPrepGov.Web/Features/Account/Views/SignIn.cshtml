@@ -1,0 +1,88 @@
+﻿@model SignInRequest
+
+@inject Microsoft.Extensions.Options.IOptions<SingleSignOnOptions> singleSignOnOptions
+@{
+    var enableSingleSignOn = singleSignOnOptions.Value.EnableSingleSignOn;
+
+    ViewData["Title"] = "Sign in";
+}
+
+<div class="loadPanel"></div>
+
+@(Html.DevExtreme().Popup()
+        .Title("Sign in")
+        .Visible(true)
+        .ShowCloseButton(false)
+        .Width(750)
+        .Height(325)
+        .ContentTemplate(new TemplateName("signin-form"))
+)
+
+
+
+@using (Html.DevExtreme().NamedTemplate("signin-form"))
+{
+
+    @using (Html.BeginForm("SignIn", "Account", FormMethod.Post))
+    { 
+        @Html.HiddenFor(m => m.RedirectUrl)
+
+        @(Html.DevExtreme().Form<SignInRequest>()
+        .ID("signin-form")
+        .ColCount(1)
+        .Items(items => {
+            items.AddSimpleFor(m => m.Username)
+                .Editor(e => e
+                    .TextBox()
+                    .ID("username")
+                ).IsRequired(false);
+
+            items.AddSimpleFor(m => m.Password)
+                .Editor(e => e
+                    .TextBox()
+                    .Mode(TextBoxMode.Password)
+                ).IsRequired(false);
+
+            items.AddGroup().Items(innerGroupItems =>
+            {
+
+                innerGroupItems.AddButton()
+                    .HorizontalAlignment(HorizontalAlignment.Left)
+                    .ButtonOptions(b => b.Text("Help")
+                    .Type(ButtonType.Normal)
+                    .OnClick("PPG.signIn.helpButton_onClick")
+                    .UseSubmitBehavior(false));
+
+                if (enableSingleSignOn)
+                {
+                    innerGroupItems.AddButton()
+                        .HorizontalAlignment(HorizontalAlignment.Center)
+                        .ButtonOptions(b => b.Text("Sign In with FedEx")
+                        .Type(ButtonType.Normal)
+                        .OnClick("PPG.signIn.signinWithFedexButton_onClick")
+                        .UseSubmitBehavior(false));
+                }
+
+                innerGroupItems.AddButton()
+                    .HorizontalAlignment(HorizontalAlignment.Right)
+                    .ButtonOptions(b => b.Text("Sign in")
+                    .Type(ButtonType.Default)
+                    .OnClick("PPG.signIn.signinButton_onClick")
+                    .UseSubmitBehavior(true));
+            }).ColCount(enableSingleSignOn ? 3 : 2);
+
+        })
+        .FormData(Model))
+    }
+
+}
+
+
+@section Scripts {}
+<script src="~/js/ppg/ppg.account-signin.bundle.min.js" asp-append-version="true"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function documentReady() {
+        this.removeEventListener('DOMContentLoaded', documentReady);
+        PPG.signIn.init();
+    });
+</script>

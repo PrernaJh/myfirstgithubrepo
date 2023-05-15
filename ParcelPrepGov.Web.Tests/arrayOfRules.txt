@@ -1,0 +1,6 @@
+[
+  { "MemberName":"Folder","Operator":"Equal","TargetValue":"CMOP"},
+  { "MemberName":"Folder","Operator":"Equal","TargetValue":"DALC"},
+  { "MemberName":"Folder","Operator":"Equal","TargetValue":"OPUS"},
+  { "MemberName":"Folder","Operator":"Equal","TargetValue":"HOHO"}
+]

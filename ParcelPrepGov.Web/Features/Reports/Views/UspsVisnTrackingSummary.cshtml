@@ -1,0 +1,251 @@
+﻿@{
+    ViewData["Title"] = "USPS Delivery Tracking by VISN Report"; 
+}
+
+<h2 class="content-block">Reporting<i class="dx-icon dx-icon-spinright"></i>USPS Delivery Tracking by VISN Report</h2>
+<p class="page-desc">
+    USPS Delivery Tracking by VISN
+</p>
+<div class="content-block">
+    <div class="dx-card">
+        <div class="ppg-container-cols">
+            <div class="dx-col-2">
+                <label>Customer - Location</label>
+                @(Html.DevExtreme().DropDownBox()
+                    .DataSource(d => d.Mvc()
+                        .Controller("Common")
+                        .LoadAction("GetSubClientSelectBoxData")
+                        .LoadMode(DataSourceLoadMode.Raw)
+                        .Key("Name")
+                    )
+                    .Placeholder("Choose Customer\\Location")
+                    .Width(280)
+                    .ShowClearButton(true)
+                    .DisplayExpr("Description")
+                    .ContentTemplate(new TemplateName("EmbeddedDataGridMultiple"))
+                    .StylingMode(EditorStylingMode.Underlined)
+                    .ValueExpr("Name")
+                    .OnValueChanged("gridBox_valueChanged")
+                 )
+                @* multi dropdown grid*@
+                @using (Html.DevExtreme().NamedTemplate("EmbeddedDataGridMultiple"))
+                {
+                    @(Html.DevExtreme().DataGrid()
+                        .ID("embedded-datagrid")
+                        .DataSource(new JS(@"component.getDataSource()"))
+                        .Columns(columns =>
+                        {
+                            columns.Add().DataField("Name");
+                        })
+                        .Selection(s => s.Mode(SelectionMode.Multiple))
+                        .Height(300)
+                        .SelectedRowKeys(new JS(@"component.option(""value"")"))
+                        .OnSelectionChanged(@<text>
+                            function(selectedItems){
+                                var keys = selectedItems.selectedRowKeys;
+                                component.option("value", keys);
+                            }
+                        </text>)
+                        )
+                }
+            </div>
+            <div class="dx-col-2">
+                <label>Manifest From Date</label>
+
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestStartDate")
+                .Name("ManifestStartDate")
+                .OnValueChanged("PPG.reports.onManifestStartDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now.AddDays(-6))
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+            </div>
+            <div class="dx-col-2">
+                <label>Manifest To Date</label>
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestEndDate")
+                .Name("ManifestEndDate")
+                .OnValueChanged("PPG.reports.onManifestEndDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now)
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+		        .ID("runReportButton")
+				.Text("Run Report")
+                .ValidationGroup("SubClientName")
+				.OnClick("PPG.reports.onRunUspsVisnTrackingSummary")
+
+    )
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+                    .ID("btnExport")
+                    .Text("Export")
+                    .Disabled(false)
+                    .Icon("xlsxfile")
+                    .ValidationGroup("SubClientName")
+                    .OnClick("PPG.reports.uspsVisnTrackingSummaryExportFile")
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="content-block">
+    <div class="dx-card" id="reportsCard">
+        <div>
+            <div style="grid-column: 1 / span 12; height: 100%; width: 100%;">
+                @(Html.DevExtreme().Button().Text("Clear Filters").ID("clearFilterBtn").OnClick("PPG.reports.clearFilters"))
+                @(Html.DevExtreme().DataGrid<ParcelPrepGov.Reports.Models.SprocModels.UspsVisnTrackingSummary>()
+                .ID("reportsGrid")
+                .DataSource(d => d.Mvc()
+                .Controller("Reports")
+                .LoadAction(nameof(ParcelPrepGov.Web.Features.Reports.ReportsController.GetUspsVisnTrackingSummary))
+                .LoadParams(new {
+                    subClientNames = new JS("PPG.reports.getSelectedSubClientList"),
+                    startDate = new JS("PPG.reports.getManifestStartDate"),
+                    endDate = new JS("PPG.reports.getManifestEndDate")
+                }))
+        .Width("100%")
+        .OnDataErrorOccurred("PPG.reports.runAndExportButtonReenable")
+        .Height(600)
+        .ShowBorders(true)
+        .ShowRowLines(true)
+        .ShowColumnLines(true)
+        .HeaderFilter(h => h.Visible(true).AllowSearch(true))
+        .Sorting(sorting => sorting.Mode(GridSortingMode.Single))
+        .LoadPanel(lp => lp.Enabled(true))
+        .Scrolling(scrolling =>
+        {
+            scrolling.Mode(GridScrollingMode.Virtual);
+            scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual);
+            scrolling.ShowScrollbar(ShowScrollbarMode.Always);
+        })
+        .AllowColumnResizing(true)
+        .ColumnResizingMode(ColumnResizingMode.Widget)
+        .ColumnAutoWidth(true)
+        .Columns(columns =>
+        {
+            columns.AddFor(m => m.LOCATION).DataType(GridColumnDataType.String).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.PRODUCT).DataType(GridColumnDataType.String).CssClass("minimal");
+            columns.AddFor(m => m.VISN).DataType(GridColumnDataType.String).CssClass("minimal");
+            columns.AddFor(m => m.MEDICAL_CENTER_NO).DataType(GridColumnDataType.String).CssClass("minimal");
+            columns.AddFor(m => m.MEDICAL_CENTER_NAME).DataType(GridColumnDataType.String).CssClass("minimal");
+            columns.AddFor(m => m.TOTAL_PCS).Format("#,##0.##").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.DELIVERED_PCS).Format("#,##0.##").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.DELIVERED_PCT).DataType(GridColumnDataType.Number).Format(Format.Percent).CssClass("minimal").AllowFiltering(false).CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatPercent(data.DELIVERED_PCT, 2);
+                                    }
+                                </text>).CalculateSortValue("DELIVERED_PCT");
+            columns.AddFor(m => m.AVG_POSTAL_DAYS).Format("#,##0.00").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.AVG_CAL_DAYS).Format("#,##0.00").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.SIGNATURE_PCS).Format("#,##0.##").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.SIGNATURE_DELIVERED_PCS).Format("#,##0.##").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.SIGNATURE_DELIVERED_PCT).DataType(GridColumnDataType.Number).Format(Format.Percent).CssClass("minimal").AllowFiltering(false).CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatPercent(data.SIGNATURE_DELIVERED_PCT, 2);
+                                    }
+                                </text>).CalculateSortValue("SIGNATURE_DELIVERED_PCT");
+            columns.AddFor(m => m.SIGNATURE_AVG_POSTAL_DAYS).Format("#,##0.00").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.SIGNATURE_AVG_CAL_DAYS).Format("#,##0.00").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.NO_STC_PCS).Format("#,##0.##").DataType(GridColumnDataType.Number).CssClass("minimal").AllowFiltering(false);
+            columns.AddFor(m => m.NO_STC_PCT).DataType(GridColumnDataType.Number).Format(Format.Percent).CssClass("minimal").AllowFiltering(false).CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatPercent(data.NO_STC_PCT, 2);
+                                    }
+                                </text>).CalculateSortValue("NO_STC_PCT");
+        }).Summary(s => s.TotalItems(items =>
+        {
+            items.AddFor(m => m.TOTAL_PCS).Alignment(HorizontalAlignment.Right).ValueFormat("#,##0.##").DisplayFormat("TOTAL: {0}").SummaryType(SummaryType.Sum);
+            items.Add()
+                .Name("DeliveredTotalPercent")
+                .ShowInColumn("DELIVERED_PCT")
+                .DisplayFormat("{0}")
+                .ValueFormat(Format.Percent)
+                .SummaryType(SummaryType.Custom);
+            items.Add()
+                    .Name("SignatureDeliveredTotalPercent")
+                    .ShowInColumn("SIGNATURE_DELIVERED_PCT")
+                    .DisplayFormat("{0}")
+                    .ValueFormat(Format.Percent)
+                    .SummaryType(SummaryType.Custom);
+            items.Add()
+                    .Name("NoSTCPercent")
+                    .ShowInColumn("NO_STC_PCT")
+                    .DisplayFormat("{0}")
+                    .ValueFormat(Format.Percent)
+                    .SummaryType(SummaryType.Custom);
+            items.Add()
+                .Name("SignatureAvgPostalDays")
+                .ShowInColumn("SIGNATURE_AVG_POSTAL_DAYS")
+                .DisplayFormat("{0}")
+                .SummaryType(SummaryType.Custom);
+            items.Add()
+                .Name("SignatureAvgCalDays")
+                .ShowInColumn("SIGNATURE_AVG_CAL_DAYS")
+                .DisplayFormat("{0}")
+                .SummaryType(SummaryType.Custom);
+            items.Add()
+                .Name("PostalDaysAverage")
+                .ShowInColumn("AVG_POSTAL_DAYS")
+                .DisplayFormat("{0}")
+                .SummaryType(SummaryType.Custom);
+            items.Add()
+                .Name("CalendarDaysAverage")
+                .ShowInColumn("AVG_CAL_DAYS")
+                .DisplayFormat("{0}")
+                .SummaryType(SummaryType.Custom);
+            items.AddFor(m => m.SIGNATURE_PCS).ValueFormat("#,##0.##").DisplayFormat("{0}").SummaryType(SummaryType.Sum);
+            items.AddFor(m => m.SIGNATURE_DELIVERED_PCS).ValueFormat("#,##0.##").DisplayFormat("{0}").SummaryType(SummaryType.Sum);
+            items.AddFor(m => m.DELIVERED_PCS).ValueFormat("#,##0.##").DisplayFormat("{0}").SummaryType(SummaryType.Sum);
+            items.AddFor(m => m.NO_STC_PCS).ValueFormat("#,##0.##").DisplayFormat("{0}").SummaryType(SummaryType.Sum);
+        }).CalculateCustomSummary(@<text>
+                    function(options){
+                        PPG.reports.calculateCustomSummary(options);
+                    }
+                </text>)
+                ))
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/ppg/ppg.reports-reports.bundle.min.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.reports.init('Usps Delivery Tracking by VISN');
+        });
+
+        var dataGrid,
+            taskIdEditor;
+
+        function gridBox_valueChanged(e) {
+            var $dataGrid = $("#embedded-datagrid");
+            if ($dataGrid.length) {
+                var dataGrid = $dataGrid.dxDataGrid("instance");
+                dataGrid.selectRows(e.value, false);
+                PPG.reports.onSubClientListChanged(e);
+            }
+        }
+
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+
+
+}

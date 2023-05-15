@@ -1,0 +1,131 @@
+﻿@model List<UspsHolidayJobHistoryModel>
+
+@{
+    ViewData["Title"] = "Service Management";
+}
+
+<h2 class="content-block">Service Management <i class="dx-icon dx-icon-spinright"></i> Manage USPS Holidays</h2>
+<p class="page-desc">Manage USPS holidays by uploading an Excel file.</p>
+
+<div class="content-block">
+    <div class="dx-card">
+          
+        <div class="ppg-card-header-cols">
+            <div style="grid-column: 1 / span 9;">
+                @(Html.DevExtreme().Button()
+                    .ID("upload-button")
+                    .Icon("upload")
+                    .OnClick("PPG.manageUspsHolidays.uploadButton_onClick")
+                    )
+                @(Html.DevExtreme().Tooltip()
+                    .Target("#upload-button")
+                    .Position(Position.Top)
+                    .ContentTemplate("Upload")
+                    .ShowEvent("mouseenter")
+                    .HideEvent("mouseleave"))
+            </div>
+            <div style="grid-column: 10 / span 3;" class="right">
+                @(Html.DevExtreme().Button()
+                .ID("exportButton")
+                .Icon("xlsxfile")
+                .Disabled(true)
+                .OnClick("PPG.manageUspsHolidays.downloadFile")
+                )
+                @(Html.DevExtreme().Tooltip()
+                    .ID("exportButtonTooltip")
+                    .Target("#exportButton")
+                    .Position(Position.Top)
+                    .ContentTemplate("Download")
+                    .ShowEvent("mouseenter")
+                    .HideEvent("mouseleave"))   
+            </div>
+        </div>
+
+        @(Html.DevExtreme().DataGrid<UspsHolidayJobHistoryModel>()
+                    .ID("gridContainer")
+                    .DataSource(d => d.Mvc()
+                    .Controller("ServiceManagement")
+                    .LoadAction(nameof(ParcelPrepGov.Web.Features.ServiceManagement.ServiceManagementController.GetUspsHolidayJobHistory))
+                    .Key("CreateDate"))
+
+                    .ShowBorders(true)
+                    .Export(e => e.Enabled(false).AllowExportSelectedData(false))
+                    .Selection(s => s.Mode(SelectionMode.Single))
+                    .OnFocusedRowChanged("PPG.manageUspsHolidays.grid_onFocusedRowChanged")
+                    .FocusedRowEnabled(true)
+                    .Columns(columns =>
+                    {
+                        columns.AddFor(m => m.CreateDate).DataType(GridColumnDataType.DateTime).Format(Format.ShortDateShortTime).SortOrder(SortOrder.Desc);
+                        columns.AddFor(m => m.Username).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.JobName).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.FileName).DataType(GridColumnDataType.String);
+                        columns.AddFor(m => m.IsSuccessful).DataType(GridColumnDataType.Boolean);
+                        columns.AddFor(m => m.ErrorMessage).DataType(GridColumnDataType.String);
+                    })
+
+                    .Paging(paging => paging.PageSize(10))
+                    .Pager(pager =>
+                    {
+                        pager.ShowPageSizeSelector(true);
+                        pager.AllowedPageSizes(new[] { 5, 10, 20 });
+                        pager.ShowInfo(true);
+                    })
+                )
+
+    </div>
+</div>
+
+
+@(Html.DevExtreme().Popup()
+        .ID("uploadUspsHolidays-popup")
+        .Width(400)
+        .Height(300)
+        .ShowTitle(true)
+        .Title("Upload")
+        .Visible(false)
+        .DragEnabled(false)
+        .CloseOnOutsideClick(false) 
+        .ContentTemplate(new TemplateName("uploaduspsHolidays-template")))
+
+@using (Html.DevExtreme().NamedTemplate("uploaduspsHolidays-template"))
+{
+    @using (Html.BeginForm("ImportUspsHolidays", "ServiceManagement", FormMethod.Post, new { @id = "uploadForm", enctype = "multipart/form-data" }))
+    {
+        @(Html.DevExtreme().Form<ManageUspsHolidaysViewModel>()
+                .ID("formManageUspsHolidays")
+                .Width(300)
+                .Items(items =>
+                {
+                        items.AddSimpleFor(m => m.UploadFile)
+                        .IsRequired(true)
+                        .Template(@<text>
+	                        @(Html.DevExtreme().FileUploader()
+                                .ID("fileUploader")
+                                .Width(250)
+                                .Name("UploadFile")
+                                .SelectButtonText("Upload USPS File")
+                                .LabelText("")
+                                .Accept("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet, application/vnd.ms-excel")
+                                .UploadMode(FileUploadMode.UseForm)
+                                .AllowedFileExtensions(new[] { ".xls", ".xlsx" })
+                                .OnValueChanged("PPG.manageUspsHolidays.fileUploader_onValueChanged")
+                                )
+	                        </text>);
+                }).ColCount(1).ValidationGroup("group").ShowValidationSummary(true));
+    }
+}
+@section Scripts {
+    <environment include="Development">
+        <script src="~/js/ppg/ppg.manage-usps-holidays.bundle.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/ppg/ppg.manage-usps-holidays.bundle.js" asp-append-version="true"></script>
+    </environment>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.manageUspsHolidays.init();
+        });
+    </script>
+}

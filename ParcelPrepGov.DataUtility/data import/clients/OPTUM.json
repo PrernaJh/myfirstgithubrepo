@@ -1,0 +1,7 @@
+﻿{
+  "name": "OPTUM",
+  "description": "OPTUM Client",
+  "recurlyAccountId": "F000010000000",
+  "isEnabled": true,
+  "partitionKey": "none"
+}

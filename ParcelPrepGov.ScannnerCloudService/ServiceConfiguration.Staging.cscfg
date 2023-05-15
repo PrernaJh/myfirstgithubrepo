@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ServiceConfiguration serviceName="ParcelPrepGov.ScannnerCloudService" xmlns="http://schemas.microsoft.com/ServiceHosting/2008/10/ServiceConfiguration" osFamily="6" osVersion="*" schemaVersion="2015-04.2.6">
+  <Role name="HoneywellScanner.Listener">
+    <Instances count="1" />
+    <ConfigurationSettings>
+      <Setting name="Api.Url" value="https://ppg-pro-appservice-va-api-test.azurewebsites.us/" />
+      <Setting name="Api.Username" value="honeywellscanner" />
+      <Setting name="Api.Password" value="PKGtracker2020!" />
+      <Setting name="HoneywellScanner.Ip" value="0.0.0.0" />
+      <Setting name="HoneywellScanner.Port" value="80" />
+      <Setting name="HoneywellScanner.ActivityTimeout" value="1" />
+      <Setting name="ApplicationInsights.ConnectionString" value="InstrumentationKey=0c1ec47b-7714-fffd-b557-22762f66da03;EndpointSuffix=applicationinsights.us;IngestionEndpoint=https://usgovvirginia-0.in.applicationinsights.azure.us/" />
+    </ConfigurationSettings>
+    <Certificates>
+    </Certificates>
+  </Role>
+</ServiceConfiguration>

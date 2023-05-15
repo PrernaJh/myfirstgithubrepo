@@ -1,0 +1,41 @@
+﻿table.ppg-table {
+    width: 100%;
+    border-collapse: collapse;
+    table-layout: auto;
+}
+
+    table.ppg-table th, table.ppg-table td {
+        border: solid 1px #c0c0c0;
+        background-color: #f5f5f5;
+        padding: 10px;
+        white-space: nowrap;
+    }
+
+    table.ppg-table td:last-child {
+        width: 100%;
+    }
+
+    table.ppg-table td:first-child {
+      font-weight: bold;
+    }
+
+
+.keypair-table {
+    display: table;
+    border: 1px solid black;
+    border-spacing: 5px;
+    border-collapse: separate;
+}
+
+.keypair-table-row {
+    display: table-row;
+}
+
+.keypair-table-row span:first-child {
+    font-weight: bold;
+    display: table-cell;
+}
+
+.keypair-table-row span:nth-child(2) {
+    display: table-cell;
+}

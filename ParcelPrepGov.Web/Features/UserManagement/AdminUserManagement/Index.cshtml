@@ -1,0 +1,175 @@
+﻿@model AdminViewModel
+@{
+    ViewData["Title"] = "User Management";
+}
+
+
+<h2 class="content-block">User Management </h2>
+
+
+
+
+<div class="content-block">
+    <div class="dx-card">
+        @(Html.DevExtreme().DataGrid<BaseUserModel>()
+    .DataSource(d => d.Mvc()
+    .Controller("AdminUserManagement")
+    .LoadAction(nameof(ParcelPrepGov.Web.Features.UserManagement.AdminUserManagementController.GetUsers))
+    .InsertAction(nameof(ParcelPrepGov.Web.Features.UserManagement.AdminUserManagementController.InsertUser))
+    .UpdateAction(nameof(ParcelPrepGov.Web.Features.UserManagement.AdminUserManagementController.UpdateUser))
+    .Key("Id"))
+    .ID("gridUsersContainer")
+    .ShowColumnLines(true)
+    .ShowRowLines(true)
+    .ShowBorders(true)
+    .FocusedRowEnabled(true)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .AllowColumnResizing(true)
+    .ColumnResizingMode(ColumnResizingMode.Widget)
+    .AllowColumnReordering(true)    
+    .OnSelectionChanged("PPG.userManagement.grid_onSelectionChanged")
+    
+    .SearchPanel(searchPanel => searchPanel.Visible(true).Width(240).Placeholder("Search..."))
+    .HeaderFilter(hf => hf.Visible(true))
+    .Paging(paging => paging.PageSize(25))
+    .Pager(pager =>
+    {
+        pager.ShowPageSizeSelector(true);
+        pager.AllowedPageSizes(new[] { 10, 25, 50 });
+        pager.ShowInfo(true);
+    })   
+    .Columns(columns => {
+        columns.AddFor(m => m.UserName).AllowHeaderFiltering(false);
+        columns.AddFor(m => m.FirstName).AllowHeaderFiltering(false);
+        columns.AddFor(m => m.LastName).AllowHeaderFiltering(false);
+        columns.AddFor(m => m.Email).AllowHeaderFiltering(false);
+        columns.AddFor(m => m.Role)
+        .Lookup(lookup => lookup.DataSource(Model.Roles));
+
+        columns.AddFor(m => m.Site)
+        .Lookup(lookup => lookup.DataSource(Model.Sites));
+        columns.AddFor(m => m.Client)
+        .Lookup(lookup => lookup.DataSource(Model.Clients));
+        columns.AddFor(m => m.SubClient)
+        .Lookup(lookup => lookup.DataSource(Model.SubClients));
+        columns.AddFor(m => m.LastPasswordChangedDate).DataType(GridColumnDataType.Date).AllowHeaderFiltering(false);
+        columns.AddFor(m => m.ConsecutiveScansAllowed);columns.AddFor(m => m.ResetPassword).DataType(GridColumnDataType.Boolean);
+        columns.AddFor(m => m.SendRecallReleaseAlerts).DataType(GridColumnDataType.Boolean);
+        columns.AddFor(m => m.Deactivated).DataType(GridColumnDataType.Boolean);
+        columns.AddFor(m => m.TemporaryPassword);
+        columns.AddFor(m => m.SendEmail).Visible(false);
+    })
+    
+    .Editing(e => e.Mode(GridEditMode.Popup)
+    .AllowUpdating(true)
+    .AllowAdding(true)
+    .Popup(p => p
+    .Title("User Info")
+    .ShowTitle(true)
+    .Height(850)
+    .Width(550)
+    .Position(pos => pos
+    .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+    .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+    .Of(new JS("window"))
+    )
+    )
+    .Form(f =>
+        f.Items(items =>
+        {
+            items.AddSimpleFor(m => m.UserName);
+            items.AddSimpleFor(m => m.Email);
+            items.AddSimpleFor(m => m.FirstName);
+            items.AddSimpleFor(m => m.LastName);
+
+            items.AddSimpleFor(m => m.Role)
+            .ColSpan(2)
+            .Editor(e => e
+            .SelectBox()
+            //.OnSelectionChanged("PPG.userManagement.RolesSelectBox_OnSelectionChanged")
+            .DataSource(Model.Roles)
+                .ID("RoleSelectBox")
+            );
+
+            items.AddSimpleFor(m => m.Site)
+            .ColSpan(2)
+            .Editor(e => e
+            .SelectBox()
+                .DataSource(Model.Sites)
+            //.OnSelectionChanged("PPG.userManagement.SiteSelectBox_OnSelectionChanged")
+            //.DataSource(d => d.Mvc().Controller("Common").LoadAction("GetSiteSelectBoxData").LoadMode(DataSourceLoadMode.Raw))
+            //.Placeholder("")
+            //.DisplayExpr("Name")
+            //.ValueExpr("Name")
+            .ID("SiteSelectBox")
+            );
+
+            items.AddSimpleFor(m => m.Client)
+            .ColSpan(2)
+            .Editor(e => e
+            .SelectBox()
+                .DataSource(Model.Clients)
+            //.DataSource(d => d.Mvc().Controller("Common").LoadAction("GetClientSelectBoxData").LoadMode(DataSourceLoadMode.Raw))
+            //.Placeholder("")
+            //.DisplayExpr("Name")
+            //.ValueExpr("Name")
+            //.OnSelectionChanged("PPG.userManagement.ClientSelectBox_OnSelectionChanged")
+            .ID("ClientSelectBox")
+            );
+
+            items.AddSimpleFor(m => m.SubClient)
+            .ColSpan(2)
+            .Editor(e => e
+            .SelectBox()
+                .DataSource(Model.SubClients)
+            //.DataSource(d => d.Mvc().Controller("Common").LoadAction("GetSubClientSelectBoxData").LoadMode(DataSourceLoadMode.Raw))
+            //.Placeholder("")
+            //.DisplayExpr("Name")
+            //.ValueExpr("Name")
+            //.OnSelectionChanged("PPG.userManagement.SubClientSelectBox_OnSelectionChanged")
+            .ID("SubClientSelectBox")
+            );
+
+            items.AddSimpleFor(m => m.ConsecutiveScansAllowed)
+            .ColSpan(2)
+            .Editor(e => e.NumberBox());
+
+            items.AddGroup().ColSpan(2).ColCount(7).Items(groupItems =>
+            {
+                groupItems.AddSimpleFor(m => m.SendEmail).ColSpan(2).Editor(e => e.Switch());               
+                groupItems.AddSimpleFor(m => m.ResetPassword).ColSpan(2).Editor(e => e.Switch());
+                groupItems.AddSimpleFor(m => m.SendRecallReleaseAlerts).ColSpan(2).Editor(e => e.Switch());
+                groupItems.AddSimpleFor(m => m.Deactivated).ColSpan(2).Editor(e => e.Switch());
+            });
+        }).ColCount(2))
+    )
+    .OnRowInserted("function(e) { e.component.navigateToRow(e.key); }")
+    .OnKeyDown("PPG.userManagement.onKeyDown")    
+    .OnToolbarPreparing("PPG.userManagement.onToolbarPreparing")
+    )
+
+
+</div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/ppg/ppg.user-management.bundle.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded',
+            function documentReady() {
+                this.removeEventListener('DOMContentLoaded', documentReady);
+
+                
+                PPG.userManagement.init();
+            });
+
+        function cellTemplate(container, options) {
+            var noBreakSpace = '\u00A0',
+                text = (options.value || []).map(element => {
+                    return options.column.lookup.calculateCellValue(element);
+                }).join(', ');
+            container.text(text || noBreakSpace).attr('title', text);
+        }
+    </script>
+}

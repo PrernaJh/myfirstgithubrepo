@@ -1,0 +1,37 @@
+﻿{
+  "name": "OPTUM_PB",
+  "description": "Pine Brook",
+  "clientName": "OPTUM",
+  "partitionKey": "none",
+  "timeZone": "EASTERN",
+  "clientFacilityRules": [
+    {
+      "name": "LEAVENWORTH",
+      "daysPlus": 0
+    },
+    {
+      "name": "CHELMSFORD",
+      "daysPlus": 1
+    },
+    {
+      "name": "TUCSON",
+      "daysPlus": 3
+    },
+    {
+      "name": "DALLAS",
+      "daysPlus": 1
+    },
+    {
+      "name": "MURFREESBORO",
+      "daysPlus": 1
+    },
+    {
+      "name": "CHICAGO",
+      "daysPlus": 2
+    },
+    {
+      "name": "CHARLESTON",
+      "daysPlus": 0
+    }
+  ]
+}

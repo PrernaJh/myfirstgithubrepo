@@ -1,0 +1,241 @@
+﻿@{
+    ViewData["Title"] = "Recall / Release Summary";
+}
+
+<h2 class="content-block">Reporting<i class="dx-icon dx-icon-spinright"></i>Recall / Release Summary</h2>
+<p class="page-desc">
+    Recall / Release Summary
+</p>
+<div class="content-block">
+    <div class="dx-card">
+        <div class="ppg-container-cols">
+            <div class="dx-col-2">
+                <label>Customer - Location</label>
+                @(Html.DevExtreme().DropDownBox()
+                    .DataSource(d => d.Mvc()
+                        .Controller("Common")
+                        .LoadAction("GetSubClientSelectBoxData")
+                        .LoadMode(DataSourceLoadMode.Raw)
+                        .Key("Name")
+                    )
+                    .Placeholder("Choose Customer\\Location")
+                    .Width(280)
+                    .ShowClearButton(true)
+                    .DisplayExpr("Description")
+                    .ContentTemplate(new TemplateName("EmbeddedDataGridMultiple"))
+                    .StylingMode(EditorStylingMode.Underlined)
+                    .ValueExpr("Name")
+                    .OnValueChanged("gridBox_valueChanged")
+                 )
+                @* multi dropdown grid*@
+                @using (Html.DevExtreme().NamedTemplate("EmbeddedDataGridMultiple"))
+                {
+                    @(Html.DevExtreme().DataGrid()
+                        .ID("embedded-datagrid")
+                        .DataSource(new JS(@"component.getDataSource()"))
+                        .Columns(columns =>
+                        {
+                            columns.Add().DataField("Name");
+                        })
+                        .Selection(s => s.Mode(SelectionMode.Single))
+                        .Height(300)
+                        .SelectedRowKeys(new JS(@"component.option(""value"")"))
+                        .OnSelectionChanged(@<text>
+                            function(selectedItems){
+                                var keys = selectedItems.selectedRowKeys;
+                                component.option("value", keys);
+                            }
+                        </text>)
+                        )
+                }
+            </div>
+            <div class="dx-col-2">
+                <label>Start Date</label>
+
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestStartDate")
+                .Name("ManifestStartDate")
+                .OnValueChanged("PPG.reports.onManifestStartDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now.AddDays(-6))
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+            </div>
+            <div class="dx-col-2">
+                <label>End Date</label>
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestEndDate")
+                .Name("ManifestEndDate")
+                .OnValueChanged("PPG.reports.onManifestEndDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now)
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+		        .ID("runReportButton")
+				.Text("Run Report")
+                .ValidationGroup("SubClientName")
+				.OnClick("PPG.reports.onRunRecallReleaseReport")
+
+    )
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+                    .ID("btnExport")
+                    .Text("Export")
+                    .Disabled(false)
+                    .Icon("xlsxfile")
+                    .ValidationGroup("SubClientName")
+                    .OnClick("PPG.reports.recallReleaseSummaryExportFile")
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="content-block">
+    <div class="dx-card" id="reportsCard">
+        <div>
+            <div style="grid-column: 1 / span 12; height: 100%; width: 100%;">
+                @(Html.DevExtreme().Button().Text("Clear Filters").ID("clearFilterBtn").OnClick("PPG.reports.clearFilters"))
+                @(Html.DevExtreme().DataGrid<ParcelPrepGov.Reports.Models.SprocModels.RecallReleaseSummary>()
+                .ID("reportsGrid")
+                .DataSource(d => d.Mvc()
+                .Controller("Reports")
+                .LoadAction(nameof(ParcelPrepGov.Web.Features.Reports.ReportsController.GetRecallReleaseSummary))
+                .LoadParams(new {
+                    subClientNames = new JS("PPG.reports.getSelectedSubClientList"),
+                    startDate = new JS("PPG.reports.getManifestStartDate"),
+                    endDate = new JS("PPG.reports.getManifestEndDate")
+                }).Key("PackageStatus"))
+        .OnDataErrorOccurred("PPG.reports.runAndExportButtonReenable")
+        .Width("100%")
+        .Height(215)
+        .OnSelectionChanged("PPG.reports.onSelectionChanged")
+        .Selection(s => s.Mode(SelectionMode.Single))
+        .ShowBorders(true)
+        .ShowRowLines(true)
+        .ShowColumnLines(true)
+        .Sorting(sorting => sorting.Mode(GridSortingMode.Single))
+        .LoadPanel(lp => lp.Enabled(true))
+        .Scrolling(scrolling =>
+        {
+            scrolling.Mode(GridScrollingMode.Virtual);
+            scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual);
+            scrolling.ShowScrollbar(ShowScrollbarMode.Always);
+        })
+        .AllowColumnResizing(true)
+        .ColumnResizingMode(ColumnResizingMode.Widget)
+        .ColumnAutoWidth(true)
+        .Columns(columns =>
+        {
+            columns.AddFor(m => m.PackageStatus).DataType(GridColumnDataType.String).CssClass("minimal");
+            columns.AddFor(m => m.Num_Packages).DataType(GridColumnDataType.Number).CssClass("minimal");
+            columns.AddFor(m => m.Status).Width(0).DataType(GridColumnDataType.String).CssClass("minimal");
+        })
+                )
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="content-block">
+    <div class="dx-card" id="reportsCardDetails" style="display:none;">
+        <div>
+            <div style="grid-column: 1 / span 12; height: 100%; width: 100%;">
+                @(Html.DevExtreme().DataGrid<PackageTracker.Data.Models.PackageFromStatus>()
+        .DataSource(d => d.Mvc()
+            .Controller("RecallRelease")
+            .LoadAction(nameof(ParcelPrepGov.Web.Features.RecallRelease.RecallReleaseController.GetPackagesFromStatus))
+            .LoadParams(new {
+                subClient = new JS("PPG.reports.getSelectedSubClientList"),
+                packageStatus = new JS("PPG.reports.getPackageStatus"),
+                startDate = new JS("PPG.reports.getManifestStartDate"),
+                endDate = new JS("PPG.reports.getManifestEndDate")
+            })
+            //.OnLoading("PPG.recallRelease.grid_onLoading")
+            //.OnLoaded("PPG.recallRelease.grid_onLoaded")
+            .Key("PackageId"))
+        .ID("packageReleaseGrid")
+        .LoadPanel(x => x.Enabled(true))
+        .Visible(true)
+        .ShowColumnLines(true)
+        .ShowRowLines(true)
+        .AllowColumnResizing(true)
+        .ColumnAutoWidth(true)
+        .ColumnResizingMode(ColumnResizingMode.Widget)
+        .AllowColumnReordering(true)
+        .ShowBorders(true)
+        .Selection(s => s.Mode(SelectionMode.Single))
+        .FocusedRowEnabled(true)
+        //.OnSelectionChanged("PPG.recallRelease.grid_onSelectionChanged")
+        .Columns(columns => {
+            columns.Add().DataField("PackageId").DataType(GridColumnDataType.String).SortOrder(SortOrder.Desc);
+            columns.AddFor(f => f.SiteName).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.ClientName).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.SubClientName).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.PackageStatus).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.PackageStatusDescription).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.RecallStatus).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.RecordCreateDate).DataType(GridColumnDataType.DateTime);
+            columns.AddFor(f => f.RecallDate).DataType(GridColumnDataType.DateTime);
+            columns.AddFor(f => f.ReleaseDate).DataType(GridColumnDataType.DateTime);
+            columns.AddFor(f => f.LocalProcessedDate).DataType(GridColumnDataType.DateTime);
+            columns.AddFor(f => f.ContainerId).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.BinCode).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.ShippingCarrier).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.AddressLine1).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.AddressLine2).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.AddressLine3).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.City).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.State).DataType(GridColumnDataType.String);
+            columns.AddFor(f => f.Zip).DataType(GridColumnDataType.String);
+        })
+        .Paging(paging => paging.PageSize(10))
+        .Pager(pager =>
+        {
+            pager.ShowPageSizeSelector(true);
+            pager.AllowedPageSizes(new[] { 5, 10, 20 });
+            pager.ShowInfo(true);
+        })
+        )
+            </div>
+        </div>
+    </div>
+</div>
+@section Scripts {
+    <script src="~/js/ppg/ppg.reports-reports.bundle.min.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.reports.init('Recall Release Summary');
+        });
+
+        var dataGrid,
+            taskIdEditor;
+
+        function gridBox_valueChanged(e) {
+            var $dataGrid = $("#embedded-datagrid");
+            if ($dataGrid.length) {
+                var dataGrid = $dataGrid.dxDataGrid("instance");
+                dataGrid.selectRows(e.value, false);
+                PPG.reports.onSubClientListChanged(e);
+            }
+        }
+    </script>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/exceljs/3.3.1/exceljs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.8/FileSaver.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-polyfill/7.4.0/polyfill.min.js"></script>
+
+
+}

@@ -1,0 +1,384 @@
+﻿@using ParcelPrepGov.Web.Features.RecallRelease.Models;
+@using ParcelPrepGov.Web.Features.RecallRelease;
+
+@{
+    ViewData["Title"] = "Package Recall/Release";
+    var defaultSubClient = User.GetSubClient() != SiteConstants.AllSites ? User.GetSubClient() : null;
+
+    var clientFilter = User.GetClient() != SiteConstants.AllSites ? $"[\"ClientName\", \"=\", \"{User.GetClient()}\"]" : "[]";
+    var siteFilter = User.GetSite() != SiteConstants.AllSites ? $"[\"SiteName\", \"=\", \"{User.GetSite()}\"]" : clientFilter;
+
+    var hasRecallDeletePolicy = (AuthorizationService.AuthorizeAsync(User, PPGClaim.WebPortal.PackageManagement.DeleteRecallPackage).Result).Succeeded;
+
+    var hasRecallPolicy = (AuthorizationService.AuthorizeAsync(User, PPGClaim.WebPortal.PackageManagement.PackageRecall).Result).Succeeded;
+    var hasReleasePolicy = (AuthorizationService.AuthorizeAsync(User, PPGClaim.WebPortal.PackageManagement.PackageRelease).Result).Succeeded;
+}
+
+@section Head {
+    <style></style>
+}
+
+
+<h2 class="content-block">Package Recall/Release</h2>
+@if (defaultSubClient == null)
+{
+    <div class="content-block">
+        <div class="ppg-container-cols">
+
+            <div style="grid-column: 1 / span 3;">
+                <div class="ppg-label">Customer\Location</div>
+                @(Html.DevExtreme().SelectBox()
+            .DataSource(d => d.Mvc()
+                .Controller("Common")
+                .LoadAction("GetSubClientSelectBoxData")
+                .LoadParams(  new { filter = siteFilter })
+
+            )
+            .DeferRendering(false)
+            .Name("SubClientName")
+            .Placeholder("")
+            .DisplayExpr("Description")
+            .ValueExpr("Name")
+            .OnValueChanged("PPG.recallRelease.onSubClientNameValueChanged")
+            )
+            </div>
+            
+        </div>
+        @Html.Hidden("releaseFileSubClientValue")
+    </div>
+}
+
+
+
+<div class="content-block" id="recallReleaseBlock">
+    <div class="ppg-container-cols">
+        @if (hasRecallPolicy)
+        {
+            <div class="dx-col-2">
+                @(Html.DevExtreme().DropDownButton()
+            .ID("recallButton")
+            .Text("Recall")
+            .DropDownOptions(options => options.Width(230))
+            .DataSource(new[] { "Single Package", "Multiple Packages" })
+            .OnItemClick("PPG.recallRelease.recallButton_onItemClick")
+        )
+            </div>
+
+            <div class="dx-col-2">
+                @(Html.DevExtreme().Button()
+                    .ID("btnExport")
+                    .Text("Export Recalled and Released Packages")
+                    .Type(ButtonType.Success)
+                    .Visible(false)
+                    .Icon("xlsxfile")
+                    .OnClick("PPG.recallRelease.exportFile")
+                )
+            </div>
+
+        }
+    </div>
+
+        @if (User.IsSupervisor())
+        {
+            <div class="dx-col-2">
+                @(Html.DevExtreme().Button()
+                    .ID("btnExport")
+                    .Text("Export Recalled and Released Packages")
+                    .Type(ButtonType.Success)
+                    .Visible(false)
+                    .Icon("xlsxfile")
+                    .OnClick("PPG.recallRelease.exportFile")
+                )
+            </div>}
+
+
+        <div class="dx-card" id="recallReleaseCard">
+            <div class="ppg-card-header-cols">
+                <div style="grid-column: 1 / span 8;">
+                    <div class="ppg-label">Recalled Packages</div>
+                </div>
+                <div style="grid-column: 9 / span 4;" class="right">
+                    @if (hasReleasePolicy)
+                    {
+                        <div style="padding:10px">
+                            @(Html.DevExtreme().Button()
+                        .ID("releaseButton")
+                        .Text("Release Package")
+                        .Type(ButtonType.Success)
+                        .StylingMode(ButtonStylingMode.Contained)
+                        .Disabled(true)
+                        .Width(160)
+                        .OnClick("PPG.recallRelease.releaseButton_onClick")
+                        )
+                            @(Html.DevExtreme().Tooltip()
+                            .ID("releaseButtonTooltip")
+                            .Target("#releaseButton")
+                            .Position(Position.Top)
+                            .ContentTemplate("Release package")
+                            .ShowEvent("mouseenter")
+                            .HideEvent("mouseleave")
+                        )
+                        </div>
+                    }
+                </div>
+            </div>
+
+            <div class="ppg-card-header-cols">
+                <div style="grid-column: 1 / span 8;">
+                    <div class="ppg-label"></div>
+                </div>
+                <div style="grid-column: 9 / span 4;" class="right">
+                    @if (hasRecallDeletePolicy)
+                    {
+                        <div style="padding:10px">
+                            @(Html.DevExtreme().Button()
+                        .ID("deleteButton")
+                        .Text("Delete Recall Package")
+                        .Type(ButtonType.Success)
+                        .StylingMode(ButtonStylingMode.Contained)
+                        .Disabled(true)
+                        .OnClick("PPG.recallRelease.deleteButton_onClick")
+                        )
+                            @(Html.DevExtreme().Tooltip()
+                            .ID("deleteButtonTooltip")
+                            .Target("#deleteButton")
+                            .Position(Position.Top)
+                            .ContentTemplate("Delete package")
+                            .ShowEvent("mouseenter")
+                            .HideEvent("mouseleave")
+                        )
+                        </div>
+                    }
+                </div>
+            </div>
+
+
+            @(Html.DevExtreme().DataGrid<ReleasedPackageViewModel>()
+        .DataSource(d => d.Mvc()
+            .Controller("RecallRelease")
+            .LoadAction(nameof(RecallReleaseController.GetRecalledPackages))
+            .LoadParams(new { subClient = new JS("PPG.recallRelease.getSelectedSubClient") })
+            .OnLoading("PPG.recallRelease.grid_onLoading")
+            .OnLoaded("PPG.recallRelease.grid_onLoaded")
+            .Key("PackageId"))
+        .ID("packageReleaseGrid")
+        .LoadPanel(x => x.Enabled(false))
+        .Visible(true)
+        .ShowColumnLines(true)
+        .ShowRowLines(true)
+        .SearchPanel(searchPanel => searchPanel.Visible(true).Width(240).Placeholder("Search..."))
+        .AllowColumnResizing(true)
+        .ColumnAutoWidth(true)
+        .ColumnResizingMode(ColumnResizingMode.Widget)
+        .AllowColumnReordering(true)
+        .ShowBorders(true)
+        .Selection(s => s.Mode(SelectionMode.Single))
+        .FocusedRowEnabled(true)
+        .OnSelectionChanged("PPG.recallRelease.grid_onSelectionChanged")
+        .FilterRow(f => f.Visible(false))
+        .Columns(cols => {
+            cols.Add().DataField("PackageId").DataType(GridColumnDataType.String).SortOrder(SortOrder.Desc);
+            cols.AddFor(f => f.Barcode).DataType(GridColumnDataType.String).Caption("Tracking Number");
+            cols.AddFor(f => f.PackageStatus).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.RecallStatus).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.RecallDate).DataType(GridColumnDataType.DateTime);
+            cols.AddFor(f => f.LocalProcessedDate).DataType(GridColumnDataType.DateTime);
+            cols.AddFor(f => f.ContainerId).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.BinCode).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.ShippingCarrier).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.ShippingMethod).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.SubClientName).DataType(GridColumnDataType.String).Caption("CUST Location");
+            cols.AddFor(f => f.RecipientName).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.Address).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.City).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.State).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.Zip).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.JobBarcode).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.MailCode).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.ProcessedDate).DataType(GridColumnDataType.String).CustomizeText("checkForDefaultDateValue");
+            cols.AddFor(f => f.SiteName).DataType(GridColumnDataType.String);
+        })
+        .Paging(paging => paging.PageSize(10))
+        .Pager(pager =>
+        {
+            pager.ShowPageSizeSelector(true);
+            pager.AllowedPageSizes(new[] { 5, 10, 20 });
+            pager.ShowInfo(true);
+        })
+        )
+        </div>
+
+        <div class="ppg-container-cols">
+            <div style="grid-column: 1 / span 12;">
+                @(Html.DevExtreme().Button()
+                .ID("releaseFileButton")
+                .Text("Release Multiple Packages")
+                .OnClick("PPG.release.releaseButton_onItemClick")
+            )
+            </div>
+        </div>
+        <div class="dx-card" id="releasedPackagesCard">
+            <div class="ppg-card-header-cols">
+                <div style="grid-column: 1 / span 8;">
+                    <div class="ppg-label">Released Packages</div>
+                </div>
+                <div style="grid-column: 9 / span 4;" class="right">
+                    @if (hasRecallPolicy)
+                    {
+                        <div style="padding:10px">
+                            @(Html.DevExtreme().Button()
+                        .ID("releaseGridRecallButton")
+                        .Text("Recall Package")
+                        .Type(ButtonType.Success)
+                        .StylingMode(ButtonStylingMode.Contained)
+                        .Disabled(true)
+                        .Width(160)
+                        .OnClick("PPG.recallRelease.releaseGridRecallButton_onClick")
+                    )
+                            @(Html.DevExtreme().Tooltip()
+                        .ID("releaseGridRecallButtonTooltip")
+                        .Target("#releaseGridRecallButton")
+                        .Position(Position.Top)
+                        .ContentTemplate("Recall package")
+                        .ShowEvent("mouseenter")
+                        .HideEvent("mouseleave")
+                    )
+                        </div>
+                    }
+                </div>
+            </div>
+
+            @(Html.DevExtreme().DataGrid<RecalledPackageViewModel>()
+        .DataSource(d => d.Mvc()
+        .Controller("RecallRelease")
+        .LoadAction(nameof(ParcelPrepGov.Web.Features.RecallRelease.RecallReleaseController.GetReleasedPackages))
+        .LoadParams(new { subClient = new JS("PPG.recallRelease.getSelectedSubClient") })
+        //.OnLoading("PPG.recallRelease.grid_onLoading")
+        //.OnLoaded("PPG.recallRelease.grid_onLoaded")
+        .Key("PackageId"))
+        .ID("releasedPackagesGrid")
+        .LoadPanel(x => x.Enabled(false))
+        .Visible(true)
+        .ShowColumnLines(true)
+        .ShowRowLines(true)
+        .SearchPanel(searchPanel => searchPanel.Visible(true).Width(240).Placeholder("Search..."))
+        .AllowColumnResizing(true)
+        .ColumnAutoWidth(true)
+        .ColumnResizingMode(ColumnResizingMode.Widget)
+        .AllowColumnReordering(true)
+        .ShowBorders(true)
+        .Selection(s => s.Mode(SelectionMode.Single))
+        .FocusedRowEnabled(true)
+        .OnSelectionChanged("PPG.recallRelease.releasegrid_onSelectionChanged")
+        .AllowColumnResizing(true)
+        .FilterRow(f => f.Visible(false))
+        .Columns(cols => {
+            cols.Add().DataField("PackageId").DataType(GridColumnDataType.String).SortOrder(SortOrder.Desc);
+            cols.AddFor(f => f.Barcode).DataType(GridColumnDataType.String).Caption("Tracking Number");
+            cols.AddFor(f => f.PackageStatus).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.RecallDate).DataType(GridColumnDataType.String).CustomizeText("checkForDefaultDateValue");
+            cols.AddFor(f => f.LocalProcessedDate).DataType(GridColumnDataType.DateTime);
+            cols.AddFor(f => f.ContainerId).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.BinCode).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.ShippingCarrier).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.ShippingMethod).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.SubClientName).DataType(GridColumnDataType.String).Caption("CUST Location");
+            cols.AddFor(f => f.RecipientName).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.Address).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.City).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.State).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.Zip).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.JobBarcode).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.MailCode).DataType(GridColumnDataType.String);
+            cols.AddFor(f => f.ProcessedDate).DataType(GridColumnDataType.String).CustomizeText("checkForDefaultDateValue");
+            cols.AddFor(f => f.SiteName).DataType(GridColumnDataType.String);
+        })
+        .Paging(paging => paging.PageSize(10))
+        .Pager(pager =>
+        {
+            pager.ShowPageSizeSelector(true);
+            pager.AllowedPageSizes(new[] { 5, 10, 20 });
+            pager.ShowInfo(true);
+        })
+        )
+        </div>
+    </div>
+
+<div class="content-block" id="releasedPackageBlock">
+
+</div>
+
+
+@(Html.DevExtreme().Popup()
+        .ID("recallPackagePopup")
+        .Width(500)
+        .Height(400)
+        .ShowTitle(true)
+        .Title("Recall Single Package")
+        .Visible(false)
+        .DragEnabled(false)
+        .CloseOnOutsideClick(false)
+        .OnShowing("PPG.recallRelease.recallPackagePopup_onShowing")
+        .OnHiding("PPG.recallRelease.recallPackagePopup_onHiding")
+        .ContentTemplate(
+        @<text>
+            @(await Html.PartialAsync("_RecallPackage.cshtml"))
+        </text>))
+@(Html.DevExtreme().Popup()
+        .ID("recallFilePopup")
+        .Width(500)
+        .Height(400)
+        .ShowTitle(true)
+        .Title("Recall Multiple Packages")
+        .Visible(false)
+        .DragEnabled(false)
+        .CloseOnOutsideClick(false)
+        .OnShowing("PPG.recallRelease.recallFilePopup_onShowing")
+        .OnHiding("PPG.recallRelease.recallFilePopup_onHiding")
+        .ContentTemplate(
+        @<text>
+            @(await Html.PartialAsync("_RecallFile.cshtml"))
+        </text>))
+@(Html.DevExtreme().Popup()
+        .ID("releaseFilePopup")
+        .Width(500)
+        .Height(400)
+        .ShowTitle(true)
+        .Title("Release Multiple Packages")
+        .Visible(false)
+        .DragEnabled(false)
+        .CloseOnOutsideClick(false)
+        .OnShowing("PPG.release.releaseFilePopup_onShowing")
+        .OnHiding("PPG.release.releaseFilePopup_onHiding")
+        .ContentTemplate(
+        @<text>
+            @(await Html.PartialAsync("_ReleaseFile.cshtml"))
+        </text>))
+
+@section Scripts {
+    <script src="~/js/ppg/ppg.recall-release.bundle.js" asp-append-version="true"></script>
+    <script src="~/js/ppg/ppg.release.bundle.js" asp-append-version="true"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.recallRelease.init('@defaultSubClient');
+            PPG.release.init('@defaultSubClient');
+        });
+
+        function checkForDefaultDateValue(options) {
+            console.log(options);
+            var customText = "";
+
+            if (options.value != "1/1/0001 12:00:00 AM") {
+                customText = options.value;
+            }
+
+            console.log(customText);
+            return customText;
+        }
+
+    </script>
+}
+
+

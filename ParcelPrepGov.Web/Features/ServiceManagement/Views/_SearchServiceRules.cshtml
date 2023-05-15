@@ -1,0 +1,89 @@
+﻿@model SearchServiceRulesViewModel
+
+@functions {}
+
+<form id="searchForm">
+
+    <div class="content-block">
+        <div class="dx-card ppg-card" id="searchServiceRulesCard">
+
+            <div class="ppg-card-header-cols">
+                <div style="grid-column: 1 / span 10;">
+                    <h2 class="content-block">Search Current Service Rule</h2>
+                </div>
+            </div>
+
+
+            <div class="ppg-card-body-wrapper">
+                <div class="ppg-card-body">
+                    <div class="ppg-container-cols">
+                        <div style="grid-column: 1 / span 3;">
+                            <div class="ppg-label">IsOrmd</div>
+                            @(Html.DevExtreme().SwitchFor(m=>m.IsOrmd).Value(Model.IsOrmd))
+                        </div>
+                        <div style="grid-column: 4 / span 3;">
+                            <div class="ppg-label">IsPoBox</div>
+                            @(Html.DevExtreme().SwitchFor(m=>m.IsPoBox).Value(Model.IsPoBox))
+                        </div>
+                        <div style="grid-column: 7 / span 3;">
+                            <div class="ppg-label">IsUpsDas</div>
+                            @(Html.DevExtreme().SwitchFor(m=>m.IsUpsDas).Value(Model.IsUpsDas))
+                        </div>
+                        <div style="grid-column: 10 / span 3;">
+                            <div class="ppg-label">IsNonContiguousState</div>
+                            @(Html.DevExtreme().SwitchFor(m=>m.IsNonContiguousState).Value(Model.IsNonContiguousState))
+                        </div>
+                        <div style="grid-column: 1 / span 3;">
+                            <div class="ppg-label">Zone</div>
+                            @(Html.DevExtreme().NumberBoxFor(m=>m.Zone).Value(Model.Zone).Format("#").ShowSpinButtons(true).Min(1).Max(8))
+                        </div>
+                        <div style="grid-column: 4 / span 3;">
+                            <div class="ppg-label">TotalDimensions</div>
+                            @(Html.DevExtreme().NumberBoxFor(m=>m.TotalDimensions)
+                                .Value(Model.TotalDimensions)
+                                .Format("###.###")
+                                .ShowSpinButtons(true))
+                        </div>
+                        <div style="grid-column: 7 / span 3;">
+                            <div class="ppg-label">MailCode</div>
+                            @(Html.DevExtreme().SelectBoxFor(m=>m.MailCode).Placeholder("").DataSource(new List<string> { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9", "D" })
+                )
+                        </div>
+                        <div style="grid-column: 10 / span 3;">
+                            <div class="ppg-label">Weight</div>
+                            @(Html.DevExtreme().NumberBoxFor(m=>m.Weight).Value(Model.Weight).Format("###.###").ShowSpinButtons(true))
+                        </div>
+                        <div style="grid-column: 1 / span 3;">
+                            <div class="ppg-label">Width</div>
+                            @(Html.DevExtreme().NumberBoxFor(m=>m.Width).Value(Model.Width).Format("###.###").ShowSpinButtons(true))
+                        </div>
+                        <div style="grid-column: 4 / span 3;">
+                            <div class="ppg-label">Length</div>
+                            @(Html.DevExtreme().NumberBoxFor(m=>m.Length).Value(Model.Length).Format("###.###").ShowSpinButtons(true))
+                        </div>
+                        <div style="grid-column: 7 / span 3;">
+                            <div class="ppg-label">Height</div>
+                            @(Html.DevExtreme().NumberBoxFor(m=>m.Height).Value(Model.Height).Format("###.###").ShowSpinButtons(true))
+                        </div>
+                        <div style="grid-column: 10 / span 3;">
+                            <div class="right-down">
+                                @(Html.DevExtreme().Button()
+                            .ID("searchButton")
+                            .Text("Search")
+                            .Type(ButtonType.Success)
+                            .Disabled(false)
+                            .UseSubmitBehavior(false)
+                            .OnClick("PPG.searchServiceRules.searchButton_onSubmit")
+                    )
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<div id="search-result-popup"></div>

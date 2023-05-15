@@ -1,0 +1,241 @@
+﻿@model ServiceOverrideViewModel
+@{
+    ViewData["Title"] = "Service Override";
+}
+
+<h2 class="content-block">Service Override</h2>
+<p class="page-desc">Override all packages at a Customer\Location level for a given date range by forcing packages to a different carrier and service level.</p>
+
+<div class="content-block">
+    @(Html.DevExtreme().SelectBox()
+        .DataSource(d => d.Mvc().Controller("Common").LoadAction("GetSubClientSelectBoxData"))
+        .DeferRendering(false)
+        .Name("CustomerName")
+        .Placeholder("Customer\\Location")
+        .DisplayExpr("Description")
+        .ValueExpr("Name")
+        .OnValueChanged("PPG.serviceOverride.onCustomerValueChanged")
+)
+</div>
+
+<div class="content-block">
+    <div class="dx-card" id="serviceOverrideCard">
+        <div class="ppg-card-header-cols">
+            <div style="grid-column: 1 / span 9;">
+                <div style="justify-self: end;">
+                    @(Html.DevExtreme().Button().ID("addNew-button").Icon("plus").Text("Add New Service Override").OnClick("PPG.serviceOverride.addNewButton_onClick"))
+                    @(Html.DevExtreme().Tooltip()
+                    .Target("#addNew-button")
+                    .Position(Position.Top)
+                    .ContentTemplate("Add New Service Override")
+                    .ShowEvent("mouseenter")
+                    .HideEvent("mouseleave"))
+                </div>
+            </div>
+            <div style="grid-column: 10 / span 3;" id="gridFilterContainer"></div>
+        </div>
+
+        @(Html.DevExtreme().Button().Text("Clear Filters").ID("clearFilterBtn").OnClick("PPG.serviceOverride.clearFilters"))
+        @(Html.DevExtreme().DataGrid<ServiceOverrideDetail>()
+    .DataSource(d => d.Mvc()
+    .Controller("ServiceOverride")
+    .LoadAction(nameof(ParcelPrepGov.Web.Features.ServiceOverride.ServiceOverrideController.Get)).LoadParams(new { customerName = new JS("PPG.serviceOverride.getSelectedCustomer") })
+    .UpdateAction(nameof(ParcelPrepGov.Web.Features.ServiceOverride.ServiceOverrideController.Update))
+    .OnLoading("PPG.serviceOverride.grid_onLoading")
+    .OnLoaded("PPG.serviceOverride.grid_onLoaded")
+    .Key("Id"))
+    .ID("serviceOverridesGrid")
+    .Visible(false)
+    .Selection(s => s.Mode(SelectionMode.Single))
+    .HoverStateEnabled(true)
+    .ShowBorders(true)
+    .LoadPanel(x => x.Enabled(false))
+    .AllowColumnResizing(true)
+    .AllowColumnReordering(true)
+    .SearchPanel(searchPanel => searchPanel.Visible(true).Width(240).Placeholder("Search..."))
+    .HeaderFilter(hf => hf.Visible(true))
+    .Editing(e => e.Mode(GridEditMode.Popup)
+        .AllowUpdating(true)
+        .Popup(p => p
+        .Title("Service Override Info")
+        .ShowTitle(true)
+        .Width(300)
+        .Height(250)
+        .Position(pos => pos
+        .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+        .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+        .Of(new JS("window"))
+        )
+        )
+        .Form(f => f.Items(items =>
+        {
+            items.AddGroup()
+            .Items(groupItems =>
+            {
+                groupItems.AddSimpleFor(m => m.IsEnabled).Editor(e => e.Switch());
+            });
+            items.AddEmpty();
+
+        }).ColCount(1)))
+    .Columns(columns => {
+        columns.AddFor(m => m.StartDate).SortOrder(SortOrder.Desc);
+        columns.AddFor(m => m.EndDate);
+        columns.AddFor(m => m.OldShippingCarrier);
+        columns.AddFor(m => m.OldShippingMethod);
+        columns.AddFor(m => m.NewShippingCarrier);
+        columns.AddFor(m => m.NewShippingMethod);
+        columns.AddFor(m => m.AddedBy);
+        columns.AddFor(m => m.IsEnabled);
+        columns.AddFor(m => m.Name).Width(0);
+        columns.AddFor(m => m.CreateDate);
+    })
+
+    .Paging(paging => paging.PageSize(10))
+    .Pager(pager =>
+    {
+        pager.ShowPageSizeSelector(true);
+        pager.AllowedPageSizes(new[] { 5, 10, 20 });
+        pager.ShowInfo(true);
+    })
+    )
+    </div>
+</div>
+
+@(Html.DevExtreme().Popup()
+        .ID("serviceOverride-popup")
+        .Width(650)
+        .Height(600)
+        .ShowTitle(true)
+        .Title("Override")
+        .Visible(false)
+        .DragEnabled(false)
+        .CloseOnOutsideClick(false)
+        .OnShowing("PPG.serviceOverride.popup_onShowing")
+        .OnHiding("PPG.serviceOverride.popup_onHiding")
+        .ContentTemplate(new TemplateName("serviceOverride-form-template")))
+
+@using (Html.DevExtreme().NamedTemplate("serviceOverride-form-template"))
+{
+    @using (Html.BeginForm("Post", "ServiceOverride", FormMethod.Post, new { @id = "ServiceOverridePostHtmlForm" }))
+    {
+        @(Html.DevExtreme().Form<ServiceOverridePost>()
+                .ID("ServiceOverridePostForm")
+                .ColCount(2)
+                .Items(groups =>
+                {
+                    groups.AddGroup()
+                    .ColSpan(2)
+                    .Items(items =>
+                    {
+                        items.AddSimpleFor(m => m.IsEnabled).Editor(e => e.Switch());
+                    });
+
+                    groups.AddGroup()
+                    .ColSpan(2)
+                    .ColCount(2)
+                    .Items(items =>
+                    {
+
+                        items.AddSimpleFor(m => m.StartDate).Editor(e => e.DateBox()
+                                            .Placeholder("")
+                                            .OnValueChanged("PPG.serviceOverride.startDate_onValueChanged")
+                                            .Type(DateBoxType.Date)
+                                            .Min(Model.SiteLocalTime.AddDays(1)));
+
+                        items.AddSimpleFor(m => m.EndDate).Editor(e => e.DateBox()
+                                            .Placeholder("")
+                                            .ValueChangeEvent("focusout")
+                                            .OnValueChanged("PPG.serviceOverride.endDate_onValueChanged")
+                                            .Type(DateBoxType.Date)
+                                            .Min(Model.SiteLocalTime.AddDays(1))
+                        );
+                    });
+
+                    groups.AddGroup()
+                    .ColSpan(2)
+                    .ColCount(2)
+                    .Items(items =>
+                    {
+                        items.AddSimpleFor(m => m.OldShippingCarrier).Editor(e => e.SelectBox()
+                                            .DataSource(Model.ShippingCarriers)
+                                            .OnValueChanged("PPG.serviceOverride.oldShippingCarrier_onValueChanged")
+                                            .Placeholder("")
+                                            .ShowClearButton(false)
+                                            .OnItemClick("PPG.serviceOverride.reloadOldShippingMethods")
+                        );
+                        items.AddSimpleFor(m => m.NewShippingCarrier).Editor(e => e.SelectBox()
+                                            .DataSource(Model.ShippingCarriers)
+                                            .OnValueChanged("PPG.serviceOverride.newShippingCarrier_onValueChanged")
+                                            .Placeholder("")
+                                            .ShowClearButton(false)
+                                            .OnItemClick("PPG.serviceOverride.reloadNewShippingMethods")
+                        );
+                    });
+
+                    groups.AddGroup()
+                    .ColSpan(2)
+                    .ColCount(2)
+                    .Items(items =>
+                    {
+                        items.AddSimpleFor(m => m.OldShippingMethod).Editor(e => e.SelectBox()
+                                            .ID("oldShippingMethod")
+                                            .DataSource(d => d.Mvc()
+                                                              .Controller("ServiceOverride")
+                                                              .LoadAction(nameof(ParcelPrepGov.Web.Features.ServiceOverride.ServiceOverrideController.GetShippingMethodsByCarrier))
+                                                              .LoadParams(new { carrierName = new JS("PPG.serviceOverride.getSelectedOldShippingCarrier") })
+                                                              .Key("Id"))
+                                            .OnValueChanged("PPG.serviceOverride.oldShippingMethod_onValueChanged")
+                                            .Placeholder("")
+                                            .ShowClearButton(false)
+                        );
+
+                        items.AddSimpleFor(m => m.NewShippingMethod).Editor(e => e.SelectBox()
+                                            .ID("newShippingMethod")
+                                            .DataSource(d => d.Mvc()
+                                                              .Controller("ServiceOverride")
+                                                              .LoadAction(nameof(ParcelPrepGov.Web.Features.ServiceOverride.ServiceOverrideController.GetShippingMethodsByCarrier))
+                                                              .LoadParams(new { carrierName = new JS("PPG.serviceOverride.getSelectedNewShippingCarrier") })
+                                                              .Key("Id"))
+                                            .OnValueChanged("PPG.serviceOverride.newShippingMethod_onValueChanged")
+                                            .Placeholder("")
+                                            .ShowClearButton(false)
+                        );
+                    });
+
+                    groups.AddGroup()
+                        .ColSpan(2)
+                        .Items(items =>
+                        {
+                            items.AddButton()
+                              .HorizontalAlignment(HorizontalAlignment.Right)
+                              .ButtonOptions(b =>
+                                                b
+                                                .ID("serviceOverrideButton")
+                                                .Text("Submit")
+                                                .Type(ButtonType.Success)
+                                                .UseSubmitBehavior(false)
+                                                .ValidationGroup("Override")
+                                                .OnClick("PPG.serviceOverride.serviceOverrideButton_onClick")
+                                            );
+                        });
+                })
+        )
+    }
+}
+
+
+@section Scripts {
+    <environment include="Development">
+        <script src="~/js/ppg/ppg.service-override.bundle.js" asp-append-version="true"></script>
+    </environment>
+    <environment exclude="Development">
+        <script src="~/js/ppg/ppg.service-override.bundle.min.js" asp-append-version="true"></script>
+    </environment>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.serviceOverride.init();
+        });
+    </script>
+}

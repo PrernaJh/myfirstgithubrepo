@@ -1,0 +1,86 @@
+﻿div.content-block .dx-card h2.content-block {
+    margin: 10px;
+    font-size: 10px;
+}
+
+div.content-block .dx-card {
+    padding-bottom: 10px;
+}
+
+.dx-fileuploader-wrapper {
+    padding: 0;
+}
+
+.dx-datagrid-borders > .dx-datagrid-headers, .dx-datagrid-borders > .dx-datagrid-rowsview, .dx-datagrid-borders > .dx-datagrid-total-footer {
+    border-left: none;
+    border-right: none;
+}
+
+.dx-datagrid-borders > .dx-datagrid-rowsview, .dx-datagrid-borders > .dx-datagrid-total-footer {
+    border: none;
+}
+
+
+.ppg-label {
+margin:0;
+    font-size: 18px;
+}
+
+
+
+.dx-button-has-text .dx-button-content {
+    overflow: visible;
+}
+
+.dx-toolbar-item { padding: 0; }
+
+.dx-datagrid.dx-datagrid-borders > .dx-datagrid-pager {
+    margin-top: -1px;
+}
+
+
+.dx-datagrid-rowsview .dx-row > td, .dx-datagrid-rowsview .dx-row > tr > td {
+    background-color: #fff;
+}
+
+/*.dx-datagrid .dx-row-alt > td, .dx-datagrid .dx-row-alt > tr > td {
+    background-color: #f5f5f5;
+}*/
+
+.dx-datagrid-headers .dx-datagrid-table .dx-row > td {
+    padding: 7px;
+}
+.dx-datagrid .dx-row > td {
+    padding: 5px;
+}
+
+.page-desc {
+    font-size: 16px;
+    color: #808080;
+    margin-top:-30px;
+    margin-left:40px;
+}
+
+
+.list-container{
+
+}
+
+.list-item {
+    font-size: 16px;
+    padding: 15px;
+}
+
+.flex-container {
+    flex-direction: row;
+    display: flex;
+    flex-wrap: wrap;
+}
+
+.dx-datagrid .dx-datagrid-content .dx-datagrid-table .dx-row > td.dx-cell-modified:not(.dx-field-item-content):last-of-type,
+.dx-datagrid .dx-datagrid-content .dx-datagrid-table .dx-row > td.dx-datagrid-invalid:not(.dx-field-item-content):last-of-type,
+.dx-datagrid .dx-datagrid-content .dx-datagrid-table .dx-row > td:last-of-type {
+    padding-right: 18px;
+    padding-top: 1px;
+    padding-bottom : 1px;
+}

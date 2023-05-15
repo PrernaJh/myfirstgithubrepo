@@ -1,0 +1,10 @@
+﻿INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20201124164601_UspsStcReports', N'3.1.6');
+
+GO
+
+INSERT INTO [__EFMigrationsHistory] ([MigrationId], [ProductVersion])
+VALUES (N'20201124195128_NewReportViews', N'3.1.6');
+
+GO
+

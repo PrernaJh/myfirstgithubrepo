@@ -1,0 +1,33 @@
+﻿@model ProfileModel
+@{
+    ViewData["Title"] = "Help";
+    Layout = "_LayoutAuthenticated";
+}
+
+<div class="content">
+    <h2 class="content-block">Profile</h2>
+    <div class="content-block">UserName: @Model.UserName</div>
+    <div class="content-block">First Name: @Model.FirstName</div>
+    <div class="content-block">Last Name: @Model.LastName</div>
+    <div class="content-block">Email: @Model.Email</div>
+    <div class="content-block">Site: @Model.Site</div>
+    <div class="content-block">Client: @Model.Client</div>
+    <div class="content-block">SubClient: @Model.SubClient</div>
+    <div class="content-block">ConsecutiveScansAllowed: @Model.ConsecutiveScansAllowed</div>
+    <div class="content-block">
+        <div>Role:</div>
+        @foreach (var role in Model.Roles)
+        {
+            <div class="content-block">@role</div>
+        }
+    </div>
+    <environment names="Development">
+        <div class="content-block">
+            <div>Claims:</div>
+            @foreach (var claim in Model.Claims)
+            {
+                <div class="content-block">@claim</div>
+            }
+        </div>
+    </environment>
+</div>

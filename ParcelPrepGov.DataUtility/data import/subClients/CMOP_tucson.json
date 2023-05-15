@@ -1,0 +1,48 @@
+{
+  "name": "CMOPTUCSON",
+  "description": "CMOP - Tucson",
+  "key": "762",
+  "clientName": "CMOP",
+  "siteName": "TUCSON",
+  "mailerId": "202111",
+  "isEnabled": true,
+  "asnFileTrigger": "FILENAME(0,4)=0762",
+  "asnImportLocation": "dev-asnimport/cmop",
+  "asnImportFormat": "CMOP_ASN_IMPORT_FORMAT1",
+  "asnExportLocation": "asnreturnfileexport",
+  "asnExportFileNameFormat": "EOD_RETURNASN_%SITE_NAME%_%CLIENT_NAME%_%DATETIME:yyyyMMddHHmm%",
+  "asnExportFormat": "CMOP_ASN_OUTPUT_FORMAT1",
+  "schedules": [
+    {
+      "Days": "M-F",
+      "Hours": "8:00-20:00"
+    }
+  ],
+  "fedExCredentials": {
+    "ApiKey": "IkjDxnBRabdoIwrDPNVNkrSV3pjIMFqmVcpsH6d3J1M=",
+    "ApiPassword": "2DiWC25iqbUP59SevWCuXOTCxkOGJ0nhlE/ooP2593E=",
+    "AccountNumber": "510087100",
+    "MeterNumber": "114002162"
+  },
+  "parentMailOwnerMid": "902115042",
+  "parentMailOwnerCrid": "23146626",
+  "uspsImpbMid": "202111",
+  "uspsMailOwnerMid": "902115042",
+  "uspsMailOwnerCrid": "23146626",
+  "uspsPermitNo": "7999",
+  "uspsPermitNoZip": "20260",
+  "uspsPaymentAccountNo": "",
+  "uspsPaymentMethod": "01",
+  "uspsPostageType": "P",
+  "uspsCsscNo": "",
+  "uspsCsscProductNo": "",
+  "upsShipmentDescription": "Medical Supplies",
+  "upsShipmentCurrencyCode": "USD",
+  "upsShipmentMonetaryValue": "129.00",
+  "uspsApiUserId": "535TECMA0117",
+  "uspsApiSourceId": "TEC Mailing Solutions, LLC",
+  "upsAccountNumber": "548A67",
+  "signatureCost": 0.0,
+  "signatureCharge": 0.0,
+  "partitionKey": "none"
+}

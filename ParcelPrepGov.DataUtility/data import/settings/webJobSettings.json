@@ -1,0 +1,184 @@
+﻿{
+  "ApplicationType": "SERVICE",
+  "WebJobSettings": {
+    "EndOfDayBlockMinutes": "1",
+    "AsnFileImportWatcher": {
+      "IsEnabled": true,
+      "JobTimer": "0 */1 * * * *",
+      "Parameters": {
+        "IsDuplicateBlockEnabled": true
+      },
+      "Schedules": []
+    },
+    "MonitorAsnFileImport": {
+      "IsEnabled": true,
+      "JobTimer": "0 * */1 * * *",
+      "Schedules": [
+        {
+          "Days": "M-F",
+          "Hours": "8:00-17:00"
+        }
+      ],
+      "Parameters": {
+        "WarningDurationHours": "2",
+        "WarningIntervalMinutes": "15"
+      }
+    },
+    "MonitorDuplicateAsns": {
+      "IsEnabled": false,
+      "JobTimer": "0 */5 * * * *",
+      "Schedules": []
+    },
+    "UpdatePackageBinsAndBinMapsJob": {
+      "IsEnabled": false,
+      "JobTimer": "0 0 */1 * * *",
+      "Schedules": [
+        {
+          "Hours": "0:00-1:00"
+        }
+      ],
+      "Parameters": {
+        "Lookback": "7",
+        "ChunkSize": "10000"
+      }
+    },
+    "UspsScanDataUpdater": {
+      "IsEnabled": false,
+      "JobTimer": "0 0 7 * * *",
+      "Parameters": {
+        "LookbackMin": "5",
+        "LookbackMax": "12"
+      }
+    },
+    "UspsScanDataFileImportWatcher": {
+      "IsEnabled": false,
+      "JobTimer": "0 */5 * * * *",
+      "Schedules": [],
+      "Parameters": {
+        "LogTrackPackages": false,
+        "FileNameMatchPattern": "DETEXTRO.V15.RPT"
+      }
+    },
+    "FedExScanDataFileImportWatcher": {
+      "IsEnabled": false,
+      "JobTimer": "0 */5 * * * *",
+      "Schedules": [],
+      "Parameters": {
+        "LogTrackPackages": false
+      }
+    },
+    "HistoricalDataFileImportWatcher": {
+      "IsEnabled": false,
+      "JobTimer": "0 0 * * * *",
+      "Schedules": []
+    },
+    "MonitorEodJob": {
+      "IsEnabled": true,
+      "JobTimer": "0 0 * * * *",
+      "Schedules": [
+        {
+          "Hours": "20:00"
+        }
+      ]
+    },
+    "MonitorEodPackagesJob": {
+      "IsEnabled": true
+    },
+    "ResetPackageEodJob": {
+      "IsEnabled": true
+    },
+    "ResetContainerEodJob": {
+      "IsEnabled": true
+    },
+    "UpdateDatasetsJob": {
+      "IsEnabled": false,
+      "JobTimer": "0 */5 * * * *"
+    },
+    "UpdatePackageServiceRuleGroupJob": {
+      "IsEnabled": true
+    },
+    "UPSGeoDescFileWatcher": {
+      "IsEnabled": false
+    },
+    "ReturnAsnFileExportJob": {
+      "IsEnabled": true
+    },
+    "PackageDetailFileExportJob": {
+      "IsEnabled": true
+    },
+    "ContainerDetailFileExportJob": {
+      "IsEnabled": true
+    },
+    "ConsumerDetailFileExportJob": {
+      "IsEnabled": true,
+      "JobTimer": "0 */30 * * * *",
+      "Schedules": []
+    },
+    "PostProcessCreatedPackagesJob": {
+      "IsEnabled": true,
+      "JobTimer": "0 0 */1 * * *"
+    },
+    "PackageRecallJob": {
+      "IsEnabled": true
+    },
+    "UpsTrackPackageJob": {
+      "IsEnabled": false,
+      "JobTimer": "0 */5 * * * *",
+      "Schedules": [],
+      "Parameters": {
+        "LogTrackPackages": false
+      }
+    },
+    "UspsEvsFileExportJob": {
+      "IsEnabled": true
+    },
+    "ZipMapFileWatcher": {
+      "IsEnabled": true
+    },
+    "ZoneFileWatcher": {
+      "IsEnabled": true
+    },
+    "ArchiveDataExporter": {
+      "IsEnabled": true,
+      "JobTimer": "0 0 7 * * *",
+      "Parameters": {
+        "StartDate": "2021-01-01",
+        "MonthsBeforeArchive": 6
+      }
+    },
+    "ReportService": {
+      "IsEnabled": true,
+      "JobTimer": "0 0 7 * * *"
+    },
+    "DailyContainerNestingReportJob": {
+      "IsEnabled": true
+    },
+    "InvoiceExpenseFileExportJob": {
+      "IsEnabled": true
+    },
+    "InvoiceExpenseExportJob": {
+      "IsEnabled": true
+    },
+    "WeeklyFinancialReportsJob": {
+      "IsEnabled": false,
+      "JobTimer": "0 0 7 * * *"
+    },
+    "CreateSqlEodPackagesJob": {
+      "IsEnabled": true,
+      "JobTimer": "0 */5 * * * *"
+    },
+    "CreateSqlEodContainersJob": {
+      "IsEnabled": true,
+      "JobTimer": "0 */5 * * * *"
+    },
+    "CleanupSqlEodCollectionsJob": {
+      "IsEnabled": true,
+      "JobTimer": "0 0 7 * * *",
+      "Parameters": {
+        "MonthsBeforeDelete": 6,
+        "ChunkSize": "10000"
+      }
+    }
+  },
+  "partitionKey": "none"
+}

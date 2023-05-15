@@ -1,0 +1,7 @@
+﻿{
+  "name": "OPUS",
+  "description": "OPUS Client",
+  "recurlyAccountId": "F000030000000",
+  "isEnabled": true,
+  "partitionKey": "none"
+}

@@ -1,0 +1,79 @@
+{
+  "endpointUri": "string",
+  "crypto": {
+    "key": "string",
+    "iv": "string"
+  },
+  "request": {
+    "webAuthenticationDetail": {
+      "parentCredential": {
+        "key": "string",
+        "password": "string"
+      },
+      "userCredential": {
+        "key": "string",
+        "password": "string"
+      }
+    },
+    "clientDetail": {
+      "accountNumber": "string",
+      "meterNumber": "string",
+      "integratorId": "string",
+      "region": 0,
+      "regionSpecified": true,
+      "localization": {
+        "languageCode": "string",
+        "localeCode": "string"
+      }
+    },
+    "transactionDetail": {
+      "customerTransactionId": "string",
+      "localization": {
+        "languageCode": "string",
+        "localeCode": "string"
+      }
+    },
+    "version": {
+      "serviceId": "string",
+      "major": 0,
+      "intermediate": 0,
+      "minor": 0
+    },
+    "cspSolutionId": "string",
+    "cspType": 0,
+    "cspTypeSpecified": true,
+    "subscriber": {
+      "accountNumber": "string",
+      "contact": {
+        "personName": "string",
+        "companyName": "string",
+        "phoneNumber": "string",
+        "phoneExtension": "string",
+        "tollFreePhoneNumber": "string",
+        "pagerNumber": "string",
+        "faxNumber": "string",
+        "eMailAddress": "string"
+      },
+      "address": {
+        "streetLines": [
+          "string"
+        ],
+        "city": "string",
+        "stateOrProvinceCode": "string",
+        "postalCode": "string",
+        "countryCode": "string",
+        "countryName": "string"
+      }
+    },
+    "accountShippingAddress": {
+      "streetLines": [
+        "string"
+      ],
+      "city": "string",
+      "stateOrProvinceCode": "string",
+      "postalCode": "string",
+      "countryCode": "string",
+      "countryName": "string"
+    }
+  }
+}

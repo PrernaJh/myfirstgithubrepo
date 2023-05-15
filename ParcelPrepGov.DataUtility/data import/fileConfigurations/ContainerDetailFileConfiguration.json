@@ -1,0 +1,10 @@
+{
+    "siteName": "GLOBAL",
+    "configurationName": "ContainerDetailFileJobQueue",
+    "fileDescription": "Container Detail File",
+    "scheduleType": "ENDOFDAY",
+    "webJobType": "CONTAINER_DETAIL",
+    "isEnabled": true,
+    "createDate": "2020-02-28T16:45:04.6650256-06:00",
+    "partitionKey": "GLOBAL"
+}

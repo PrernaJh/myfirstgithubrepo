@@ -1,0 +1,7 @@
+﻿body, html {
+    min-height: 100%;
+    background-image: url(../imgs/MMS.png);
+    background-repeat: no-repeat;
+    background-position: top center;
+    background-size: 75vw;
+}

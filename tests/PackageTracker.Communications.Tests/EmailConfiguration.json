@@ -1,0 +1,8 @@
+﻿{
+  "SmtpServer": "smtp.office365.com",
+  "SmtpPort": 587,
+  "SmtpUsername": "donotreply@mailmanifestsystem.com",
+  "SmtpPassword": "Mar92360",
+  "ExceptionsEmailContactList": [],
+  "ExceptionsSmsContactList": []
+}

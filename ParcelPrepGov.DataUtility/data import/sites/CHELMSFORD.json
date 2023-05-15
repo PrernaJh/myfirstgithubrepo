@@ -1,0 +1,80 @@
+{
+  "siteName": "CHELMSFORD",
+  "eodGroup": "EOD_CHELMSFORD",
+  "zip": "01821",
+  "zipPlusFour": "",
+  "description": "FSC CHELMSFORD",
+  "permitNumber": "7999",
+  "shipperAccount": "4800",
+  "mailProducerMid": "901581569",
+  "mailProducerCrid": "15345458",
+  "sackMailerId": "901581595",
+  "sackCrid": "13529793",
+  "palletMailerId": "901958891",
+  "palletCrid": "15345458",
+  "pmodPalletPermitNumber": "24500",
+  "alternateCarrierBarcodePrefix": "",
+  "isEnabled": true,
+  "fullAddress": "FSC CHELMSFORD 37 MANNING ROAD BILLERICA MA 01821",
+  "addressLineOne": "37 MANNING ROAD",
+  "addressLineTwo": "",
+  "city": "BILLERICA",
+  "state": "MA",
+  "timeZone": "EASTERN",
+  "uspsPermitNo": "",
+  "uspsPaymentMethod": "",
+  "uspsPermitNoZip": "",
+  "uspsPostageType": "",
+  "uspsApiUserId": "535TECMA0117",
+  "uspsApiSourceId": "TEC Mailing Solutions, LLC",
+  "uspsCsscNo": "",
+  "uspsCsscProductNo": "",
+  "upsShipperAttentionName": "FSC",
+  "upsShipperPhone": "9999999999",
+  "evsId": "2",
+  "fedExCredentials": {
+    "apiKey": "IkjDxnBRabdoIwrDPNVNkrSV3pjIMFqmVcpsH6d3J1M=",
+    "apiPassword": "2DiWC25iqbUP59SevWCuXOTCxkOGJ0nhlE/ooP2593E=",
+    "accountNumber": "510087100",
+    "meterNumber": "114002162"
+  },
+  "binOverrides": [
+    {
+      "shippingCarrier": "USPS",
+      "shippingMethod": "FIRST_CLASS",
+      "binCode": "F61-Z-FC"
+    },
+    {
+      "shippingCarrier": "USPS",
+      "shippingMethod": "PRIORITY_MAIL",
+      "binCode": "P61-Z-PM"
+    },
+    {
+      "shippingCarrier": "UPS",
+      "shippingMethod": "",
+      "binCode": "UPS-BIN"
+    },
+    {
+      "shippingCarrier": "FEDEX",
+      "shippingMethod": "",
+      "binCode": "FEDEX-BIN"
+    }
+  ],
+  "criticalAlertEmailList": [
+    "bstabler@tecmailing.com"
+  ],
+  "criticalAlertSmsList": [],
+  "eodSummaryEmailList": [
+    "bstabler@tecmailing.com"
+  ],
+  "siteCustomData": [
+    {
+      "customDataType": "MERCURYGATE",
+      "customData": "GENCO MMS CHELMSFORD,37 MANNING ROAD,,BILLERICA,MA,01821"
+    }
+  ],
+  "schedules": [],
+  "partitionKey": "none",
+  "createDate": "2020-10-22T10:56:53.2611888-05:00",
+  "isDatasetProcessed": false
+}

@@ -1,0 +1,47 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+    <Platforms>AnyCPU;x64</Platforms>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Migrations\20201021163659_AddTrackPackageDatasets.cs" />
+    <Compile Remove="Migrations\20201021163659_AddTrackPackageDatasets.Designer.cs" />
+    <Compile Remove="Migrations\20201021164013_AddTrackPackageDatasets.cs" />
+    <Compile Remove="Migrations\20201021164013_AddTrackPackageDatasets.Designer.cs" />
+    <Compile Remove="Migrations\20201021172659_AddTrackPackageDatasets2.cs" />
+    <Compile Remove="Migrations\20201021172659_AddTrackPackageDatasets2.Designer.cs" />
+    <Compile Remove="Migrations\20201123145020_UspsStcReports.cs" />
+    <Compile Remove="Migrations\20201123145020_UspsStcReports.Designer.cs" />
+    <Compile Remove="Migrations\20201124164205_UspsStcReports.cs" />
+    <Compile Remove="Migrations\20201124164205_UspsStcReports.Designer.cs" />
+    <Compile Remove="Migrations\20201124194024_ThreeNewReportViews.cs" />
+    <Compile Remove="Migrations\20201124194024_ThreeNewReportViews.Designer.cs" />
+    <Compile Remove="Migrations\20220728193358_AddUserLookup.cs" />
+    <Compile Remove="Migrations\20220728193358_AddUserLookup.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Dapper" Version="2.0.78" />
+    <PackageReference Include="DevExpress.Xpo" Version="20.1.6" />
+    <PackageReference Include="DevExpress.AspNetCore.Dashboard" Version="20.1.6" />
+    <PackageReference Include="DevExpress.AspNetCore.Spreadsheet" Version="20.1.6" />
+    <PackageReference Include="DevExpress.Document.Processor" Version="20.1.6" />
+    <PackageReference Include="DevExpress.Spreadsheet.Core" Version="20.1.6" />
+    <PackageReference Include="DevExtreme.AspNet.Core" Version="20.1.6" />
+    <PackageReference Include="DevExtreme.AspNet.Data" Version="2.6.2" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="3.1.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="3.1.6" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="3.1.6">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.1.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\PackageTracker.Domain\PackageTracker.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

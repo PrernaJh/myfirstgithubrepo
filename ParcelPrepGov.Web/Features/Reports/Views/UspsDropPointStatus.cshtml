@@ -1,0 +1,264 @@
+﻿@{
+    ViewData["Title"] = "USPS Drop Point Status";
+
+}
+
+
+<h2 class="content-block">Reporting<i class="dx-icon dx-icon-spinright"></i>USPS Drop Point Status</h2>
+<p class="page-desc">
+    USPS Drop Point Status
+</p>
+
+<div class="content-block">
+    <div class="dx-card">
+        <div class="ppg-container-cols">
+            <div class="dx-col-2">
+                <label>Customer - Location</label>
+                @(Html.DevExtreme().DropDownBox()
+                    .DataSource(d => d.Mvc()
+                        .Controller("Common")
+                        .LoadAction("GetSubClientSelectBoxData")
+                        .LoadMode(DataSourceLoadMode.Raw)
+                        .Key("Name")
+                    )
+                    .Placeholder("Choose Customer\\Location")
+                    .Width(280) 
+                    .ShowClearButton(true)
+                    .DisplayExpr("Description")
+                    .ContentTemplate(new TemplateName("EmbeddedDataGridMultiple"))
+                    .StylingMode(EditorStylingMode.Underlined)
+                    .ValueExpr("Name")
+                    .OnValueChanged("gridBox_valueChanged")
+                 )
+                @* multi dropdown grid*@
+                @using (Html.DevExtreme().NamedTemplate("EmbeddedDataGridMultiple"))
+                {
+                    @(Html.DevExtreme().DataGrid()
+                        .ID("embedded-datagrid")
+                        .DataSource(new JS(@"component.getDataSource()"))
+                        .Columns(columns =>
+                        {
+                            columns.Add().DataField("Name");
+                        })
+                        .Selection(s => s.Mode(SelectionMode.Multiple))
+                        .Height(300)
+                        .SelectedRowKeys(new JS(@"component.option(""value"")"))
+                        .OnSelectionChanged(@<text>
+                            function(selectedItems){
+                                var keys = selectedItems.selectedRowKeys;
+                                component.option("value", keys);
+                            }
+                        </text>)
+                        )
+                }
+            </div>
+            <div class="dx-col-2">
+                <label>Manifest From Date</label>
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestStartDate")
+                .Name("ManifestStartDate")
+                .OnValueChanged("PPG.reports.onManifestStartDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now.AddDays(-6))
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+            </div>
+            <div class="dx-col-2">
+                <label>Manifest To Date</label>
+                @(Html.DevExtreme().DateBox()
+                .ID("manifestEndDate")
+                .Name("ManifestEndDate")
+                .OnValueChanged("PPG.reports.onManifestEndDateChanged")
+                .Type(DateBoxType.Date)
+                .Value(DateTime.Now)
+                .Width(170)
+                .Min(DateTime.Now.AddDays(-180))
+                .Max(DateTime.Now)
+                )
+
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+		        .ID("runReportButton")
+				.Text("Run Report")
+                .ValidationGroup("SiteName")
+				.OnClick("PPG.reports.onRunDropPointReport")
+
+            )
+            </div>
+            <div class="dx-col-1" style="text-align:right">
+                @(Html.DevExtreme().Button()
+                    .ID("btnExport")
+                    .Text("Export")
+                    .Disabled(false)
+                    .Icon("xlsxfile")
+                    .ValidationGroup("SiteName")
+                    .OnClick("PPG.reports.uspsDropPointStatusExportFile"))
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<div class="content-block">
+    <div class="dx-card" id="reportsCard">
+        <div class="ppg-container-cols">
+            <div style="grid-column: 1 / span 12;">
+                @(Html.DevExtreme().Button().Text("Clear Filters").ID("clearFilterBtn").OnClick("PPG.reports.clearFilters"))
+                <br />
+                <br />
+                @(Html.DevExtreme().DataGrid<ParcelPrepGov.Reports.Models.SprocModels.UspsDropPointStatusMaster>()
+                    .ID("reportsGrid")
+                    .DataSource(d => d.Mvc()
+                    .Controller("Reports")
+                    .LoadAction(nameof(ParcelPrepGov.Web.Features.Reports.ReportsController.GetUspsDropPointStatusReport))
+                    .LoadParams(new { subClientNames = new JS("PPG.reports.getSelectedSubClientList")
+                                    ,startDate = new JS("PPG.reports.getManifestStartDate")
+                                    ,endDate= new JS("PPG.reports.getManifestEndDate")}))
+                //.RemoteOperations(true)
+                //.StateStoring(f => f.Enabled(true).Type(StateStoringType.LocalStorage).StorageKey("storage"))
+                .ShowBorders(true)
+                .HeaderFilter(h => h.Visible(true).AllowSearch(true))
+                .AllowColumnResizing(true)
+                .OnDataErrorOccurred("PPG.reports.runAndExportButtonReenable")
+                .Width("100%")
+                        .Height(500)
+                        .ShowBorders(true)
+                        .ShowRowLines(true)
+                        .ShowColumnLines(true)
+                        .Scrolling(scrolling =>
+                        {
+                            scrolling.Mode(GridScrollingMode.Virtual);
+                            scrolling.ColumnRenderingMode(GridColumnRenderingMode.Virtual);
+                            scrolling.ShowScrollbar(ShowScrollbarMode.Always);
+                        })
+                .Sorting(sorting => sorting.Mode(GridSortingMode.Single))
+                .ColumnResizingMode(ColumnResizingMode.Widget)
+                .ColumnAutoWidth(true)
+                .Columns(columns =>
+                {
+                columns.AddFor(m => m.CUST_LOCATION).DataType(GridColumnDataType.String).AllowFiltering(false).CssClass("minimal");
+                columns.AddFor(m => m.MANIFEST_DATE).DataType(GridColumnDataType.Date).AllowFiltering(false).CssClass("minimal").SortOrder(SortOrder.Desc).CalculateCellValue(@<text>
+                            function(data) {
+                                return data.MANIFEST_DATE_STRING;
+                            }
+                        </text>);
+                columns.AddFor(m => m.ENTRY_UNIT_NAME).DataType(GridColumnDataType.String).CssClass("minimal");
+                columns.AddFor(m => m.ENTRY_UNIT_CSZ).DataType(GridColumnDataType.String).CssClass("minimal");
+                columns.AddFor(m => m.ENTRY_UNIT_TYPE).DataType(GridColumnDataType.String).AllowFiltering(false).CssClass("minimal");
+                columns.AddFor(m => m.PRODUCT).DataType(GridColumnDataType.String).CssClass("minimal");
+                columns.AddFor(m => m.CARRIER).DataType(GridColumnDataType.String).CssClass("minimal");
+                columns.AddFor(m => m.TOTAL_PCS).DataType(GridColumnDataType.Number).AllowFiltering(false).CssClass("minimal");
+                columns.AddFor(m => m.TOTAL_BAGS).DataType(GridColumnDataType.Number).AllowFiltering(false).CssClass("minimal");
+                columns.AddFor(m => m.PCS_NO_STC).DataType(GridColumnDataType.Number).AllowFiltering(false).CssClass("minimal");
+                columns.AddFor(m => m.PCS_NO_SCAN).DataType(GridColumnDataType.Number).AllowFiltering(false).CssClass("minimal");
+                columns.AddFor(m => m.PCT_NO_STC).DataType(GridColumnDataType.Number).AllowFiltering(false).Format(Format.Percent).CssClass("minimal").CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatPercent(data.PCT_NO_STC, 2);
+                                    }
+                                </text>).CalculateSortValue("PCT_NO_STC");
+                columns.AddFor(m => m.PCT_NO_SCAN ).DataType(GridColumnDataType.Number).AllowFiltering(false).Format(Format.Percent).CssClass("minimal").CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatPercent(data.PCT_NO_SCAN, 2);
+                                    }
+                                </text>).CalculateSortValue("PCT_NO_SCAN");
+
+                })
+                .Summary(s => s.TotalItems(items =>
+                    {
+                        items.AddFor(m => m.CUST_LOCATION).SummaryType(SummaryType.Count);
+                    }))
+                .MasterDetail(md =>
+                        md.Enabled(true)
+                        .Template(new TemplateName("gridContainer-details-tab1-gridTemplate")))
+
+
+                ) @using (Html.DevExtreme().NamedTemplate("gridContainer-details-tab1-gridTemplate"))
+                {
+                    @(Html.DevExtreme().DataGrid<ParcelPrepGov.Reports.Models.SprocModels.UspsDropPointStatusDetail>()
+                        .ColumnAutoWidth(true)
+                        .AllowColumnResizing(true)
+                        .ColumnResizingMode(ColumnResizingMode.Widget)
+                        .ShowBorders(true)
+                        .OnCellPrepared("cell_prepared")
+                        .Columns(columns =>
+                        {
+                            columns.AddFor(m => m.CUST_LOCATION).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.MANIFEST_DATE).DataType(GridColumnDataType.Date).CssClass("minimal").CalculateCellValue(@<text>
+                                    function(data) {
+                                        return data.MANIFEST_DATE_STRING;
+                                    }
+                                </text>);
+                            columns.AddFor(m => m.ENTRY_UNIT_NAME).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.ENTRY_UNIT_CSZ).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.ENTRY_UNIT_TYPE).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.PRODUCT).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.CARRIER).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.LAST_KNOWN_DESC).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.LAST_KNOWN_DATE).DataType(GridColumnDataType.Date).CssClass("minimal").SortOrder(SortOrder.Desc).CalculateCellValue(@<text>
+                                    function(data) {
+                                        return data.LAST_KNOWN_DATE_STRING;
+                                    }
+                                </text>);
+                            columns.AddFor(m => m.LAST_KNOWN_LOCATION).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.LAST_KNOWN_ZIP).DataType(GridColumnDataType.String).CssClass("minimal");
+                            columns.AddFor(m => m.PACKAGE_ID).DataType(GridColumnDataType.String).CssClass("minimal").CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatPackageHyperLink(data);
+                                    }
+                                </text>);
+                            columns.AddFor(m => m.TRACKING_NUMBER).DataType(GridColumnDataType.String).CssClass("minimal").CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatTrackingHyperLink(data);
+                                    }
+                                </text>);
+                               columns.AddFor(m => m.CONTAINER_ID).DataType(GridColumnDataType.String).CssClass("minimal").CalculateCellValue(@<text>
+                                    function(data) {
+                                        return PPG.reports.formatContainerHyperLink(data);
+                                    }
+                                </text>);                            
+                        })
+
+                        .DataSource(d => d.Mvc()
+                        .Controller("Reports")
+                        .LoadAction(nameof(ParcelPrepGov.Web.Features.Reports.ReportsController.GetUspsDropPointStatusDetailsBySingleId))
+                        .LoadParams(new {
+                            subClientNames = new JS("PPG.reports.getSelectedSubClientList"),
+                            manifestDate = new JS("data.MANIFEST_DATE"),
+                            id = new JS("data.ID")
+                        }))
+                    )
+
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/ppg/ppg.reports-reports.bundle.min.js" asp-append-version="true"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.reports.init('USPS Drop Point Status');
+        });
+
+        var dataGrid,
+            taskIdEditor;
+        function gridBox_valueChanged(e) {
+            var $dataGrid = $("#embedded-datagrid");
+            if ($dataGrid.length) {
+                var dataGrid = $dataGrid.dxDataGrid("instance");
+                dataGrid.selectRows(e.value, false);
+                PPG.reports.onSubClientListChanged(e);
+            }
+        }
+        function cell_prepared(options) {
+            options.cellElement.html(options.value);
+        }
+
+    </script>
+}

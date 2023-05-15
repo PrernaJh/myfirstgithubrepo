@@ -1,0 +1,42 @@
+﻿@{
+    if(User.IsAdministrator() || User.IsSystemAdministrator())
+    {
+        @(Html.DevExtreme().FileManager()            
+        .FileSystemProvider(provider => provider.Remote()
+        .Url(Url.RouteUrl("BulletinProviderApi")))
+        .Permissions(permissions => permissions
+            .Download(true)
+            .Upload(true)
+            .Delete(true)
+            )
+        //.AllowedFileExtensions(new string[3] { ".txt", ".csv", ".xlsx" } )
+        .Upload(upload => upload.MaxFileSize(1103741824).ChunkSize(200000)).Height(600)        
+        );
+    }
+    else if (User.IsGeneralManager() || User.IsQualityAssurance())
+    {
+        @(Html.DevExtreme().FileManager()            
+        .FileSystemProvider(provider => provider.Remote()
+        .Url(Url.RouteUrl("BulletinProviderApi")))
+        .Permissions(permissions => permissions
+            .Download(true)
+            .Upload(true)
+            )
+        //.AllowedFileExtensions(new string[3] { ".txt", ".csv", ".xlsx" } )
+        .Upload(upload => upload.MaxFileSize(1103741824).ChunkSize(200000)).Height(600)
+        );
+    }
+    else
+    {
+        @(Html.DevExtreme().FileManager()
+        .FileSystemProvider(provider => provider.Remote()
+        .Url(Url.RouteUrl("BulletinProviderApi")))
+        .Permissions(permissions => permissions
+            .Download(true) 
+            ).Height(800)
+        //.AllowedFileExtensions(new string[3] { ".txt", ".mp4", ".csv" } )
+        //.Upload(upload => upload.MaxFileSize(1048576))
+        );
+    }
+
+}

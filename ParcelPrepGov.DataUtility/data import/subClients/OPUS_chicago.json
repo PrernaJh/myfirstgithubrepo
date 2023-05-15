@@ -1,0 +1,49 @@
+﻿{
+  "name": "OPUSCHICAGO",
+  "description": "OPUS - Chicago",
+  "key": "111",
+  "clientName": "OPUS",
+  "siteName": "CHICAGO",
+  "mailerId": "903075208",
+  "uspsImpbMid": "903075208",
+  "isEnabled": true,
+  "asnFileTrigger": "FILENAME(1,3)=111",
+  "asnImportLocation": "dev-asnimport/opus",
+  "asnImportFormat": "OPUS_ASN_IMPORT_FORMAT1",
+  "asnExportLocation": "asnreturnfileexport",
+  "asnExportFileNameFormat": "EOD_RETURNASN_%SITE_NAME%_%CLIENT_NAME%_%DATETIME:yyyyMMddHHmm%",
+  "asnExportFormat": "OPUS_ASN_OUTPUT_FORMAT1",
+  "schedules": [
+    {
+      "Days": "M-F",
+      "Hours": "8:00-17:00"
+    }
+  ],
+  "fedExCredentials": {
+    "ApiKey": "IkjDxnBRabdoIwrDPNVNkrSV3pjIMFqmVcpsH6d3J1M=",
+    "ApiPassword": "2DiWC25iqbUP59SevWCuXOTCxkOGJ0nhlE/ooP2593E=",
+    "AccountNumber": "510087100",
+    "MeterNumber": "114002162"
+  },
+  "includeMailOwnerMIDInEvs": false,
+  "fscMailOwnerMid": "902115042",
+  "fscMailOwnerCrid": "23146626",
+  "uspsMailOwnerMid": "902115042",
+  "uspsMailOwnerCrid": "23146626",
+  "uspsPermitNo": "56027",
+  "uspsPermitNoZip": "20260",
+  "uspsPaymentAccountNo": "",
+  "uspsPaymentMethod": "01",
+  "uspsPostageType": "P",
+  "uspsCsscNo": "",
+  "uspsCsscProductNo": "",
+  "upsShipmentDescription": "Medical Supplies",
+  "upsShipmentCurrencyCode": "USD",
+  "upsShipmentMonetaryValue": "129.00",
+  "uspsApiUserId": "535TECMA0117",
+  "uspsApiSourceId": "TEC Mailing Solutions, LLC",
+  "upsAccountNumber": "548A67",
+  "signatureCost": 0.0,
+  "signatureCharge": 0.0,
+  "partitionKey": "none"
+}

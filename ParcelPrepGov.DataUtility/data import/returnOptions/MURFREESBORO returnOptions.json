@@ -1,0 +1,78 @@
+{
+  "siteName": "MURFREESBORO",
+  "partitionKey": "MURFREESBORO",
+  "returnReasons": [
+    {
+      "Value": "DAMAGE",
+      "ValueDescription": "Damage"
+    },
+    {
+      "Value": "PROCESSERROR",
+      "ValueDescription": "Process Error"
+    },
+    {
+      "Value": "LABEL",
+      "ValueDescription": "Label"
+    }
+  ],
+  "reasonDescriptions": [
+    {
+      "Value": "TORNPACKAGE",
+      "ValueDescription": "Torn Package",
+      "returnReasonValue": "DAMAGE"
+    },
+    {
+      "Value": "DAMAGEDPACKAGE",
+      "ValueDescription": "Damaged Package",
+      "returnReasonValue": "DAMAGE"
+    },
+    {
+      "Value": "LEAKING",
+      "ValueDescription": "Leaking Contents",
+      "returnReasonValue": "DAMAGE"
+    },
+    {
+      "Value": "UNSEALED",
+      "ValueDescription": "Unsealed/Open Package",
+      "returnReasonValue": "DAMAGE"
+    },
+    {
+      "Value": "CROSSSCAN",
+      "ValueDescription": "Cross Scan",
+      "returnReasonValue": "PROCESSERROR"
+    },
+    {
+      "Value": "WRINKLEDLABEL",
+      "ValueDescription": "Wrinkled Label",
+      "returnReasonValue": "LABEL"
+    },
+    {
+      "Value": "MISSINGLABEL",
+      "ValueDescription": "Missing Label",
+      "returnReasonValue": "LABEL"
+    },
+    {
+      "Value": "TORNLABEL",
+      "ValueDescription": "Torn Label",
+      "returnReasonValue": "LABEL"
+    },
+    {
+      "Value": "BARCODEERROR",
+      "ValueDescription": "Label barcode not scanned",
+      "returnReasonValue": "LABEL"
+    },
+    {
+      "Value": "LABELOTHER",
+      "ValueDescription": "Label - other reason",
+      "returnReasonValue": "LABEL"
+    },
+    {
+      "Value": "DAMAGEDLABEL",
+      "ValueDescription": "Damaged Label",
+      "returnReasonValue": "LABEL"
+    }
+  ],
+  "isEnabled": true,
+  "createDate": "2020-08-03T12:00:00.6366032-06:00",
+  "startDate": "2020-08-03T12:00:00.6366032-06:00"
+}

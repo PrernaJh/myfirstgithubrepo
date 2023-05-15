@@ -1,0 +1,13 @@
+﻿{
+  "ApplicationType": "SERVICE,API",
+  "UspsApis": {
+    "TrackPackageUriRoot": "https://secure.shippingapis.com/ShippingAPI.dll?API=TrackV2&XML=",
+    "RateDomesticUriRoot": "https://secure.shippingapis.com/ShippingAPI.dll?API=RateV4&XML=",
+    "LabelUriRoot": "https://stg-secure.shippingapis.com/shippingapi.dll?API=eVSCertify&XML=<eVSCertifyRequest",
+    "LabelUriEnd": "</eVSCertifyRequest>",
+    "UserId": "535TECMA0117",
+    "Revision": "1",
+    "ClientIp": "127.0.0.0"
+  },
+  "partitionKey": "none"
+}

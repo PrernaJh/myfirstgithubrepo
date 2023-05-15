@@ -1,0 +1,53 @@
+﻿{
+    "indexingMode": "consistent",
+    "automatic": true,
+    "includedPaths": [
+        {
+            "path": "/partitionKey/?"
+        },
+        {
+            "path": "/packageId/?"
+        },
+        {
+            "path": "/guidPackageId/?"
+        },
+        {
+            "path": "/barcode/?"
+        },
+        {
+            "path": "/siteName/?"
+        },
+        {
+            "path": "/subClientName/?"
+        },
+        {
+            "path": "/createDate/?"
+        },
+        {
+            "path": "/isPackageProcessed/?"
+        },
+        {
+            "path": "/returnAsnRecord/?"
+        },
+        {
+            "path": "/packageDetailRecord/?"
+        },
+        {
+            "path": "/invoiceRecord/?"
+        },
+        {
+            "path": "/singleExpenseRecord/?"
+        },
+        {
+            "path": "/evsRecord/?"
+        }
+    ],
+    "excludedPaths": [
+        {
+            "path": "/*"
+        },
+        {
+            "path": "/\"_etag\"/?"
+        }
+    ]
+}

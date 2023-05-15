@@ -1,0 +1,163 @@
+﻿@model SubClientViewModel
+@{
+    ViewData["Title"] = "User Management";
+}
+
+@if (Model.AllSubClients)
+{
+    <h2 class="content-block">User Management - All of @Model.ClientName </h2>
+}
+else
+{
+    <h2 class="content-block">User Management - @Model.ClientName -> @Model.SubClientName </h2>
+}
+
+<div class="content-block">
+    <div class="dx-card">
+
+        @(Html.DevExtreme().DataGrid<SubClientUserModel>()
+.DataSource(d => d.Mvc()
+.Controller("SubClientUserManagement")
+.LoadAction(nameof(ParcelPrepGov.Web.Features.UserManagement.SubClientUserManagementController.GetUsers)).LoadParams(new { clientName = Model.ClientName, subClientName = Model.SubClientName, allUsers = Model.AllSubClients })
+.InsertAction(nameof(ParcelPrepGov.Web.Features.UserManagement.SubClientUserManagementController.InsertUser))
+.UpdateAction(nameof(ParcelPrepGov.Web.Features.UserManagement.SubClientUserManagementController.UpdateUser))
+.Key("Id"))
+.ID("gridUsersContainer")
+.ShowColumnLines(true)
+.ShowRowLines(true)
+.ShowBorders(true)
+.FocusedRowEnabled(true)
+.Selection(s => s.Mode(SelectionMode.Single))
+.AllowColumnResizing(true)
+.ColumnResizingMode(ColumnResizingMode.Widget)
+.AllowColumnReordering(true)
+.OnSelectionChanged("PPG.userManagement.grid_onSelectionChanged")
+.SearchPanel(searchPanel => searchPanel.Visible(true).Width(240).Placeholder("Search..."))
+.HeaderFilter(hf => hf.Visible(true))
+
+
+.Paging(paging => paging.PageSize(10))
+.Pager(pager =>
+{
+pager.ShowPageSizeSelector(true);
+pager.AllowedPageSizes(new[] { 5, 10, 20 });
+pager.ShowInfo(true);
+})
+
+.Columns(columns => {
+columns.AddFor(m => m.UserName).AllowHeaderFiltering(false);
+columns.AddFor(m => m.FirstName).AllowHeaderFiltering(false);
+columns.AddFor(m => m.LastName).AllowHeaderFiltering(false);
+columns.AddFor(m => m.Email).AllowHeaderFiltering(false);
+columns.AddFor(m => m.Roles)
+.Lookup(lookup => lookup.DataSource(d => d.Mvc().Controller("SubClientUserManagement").LoadAction("GetRoles")))
+.CellTemplate(new JS("cellTemplate"))
+.CalculateFilterExpression(@<text>
+                function(filterValue, selectedFilterOperation, target) {
+                    if(target === "search" && typeof(filterValue) === "string") {
+                        return [this.dataField, "contains", filterValue]
+                    }
+                    return function(data) {
+                        return (data.Role || []).indexOf(filterValue) !== -1 || ((data.Role || []).length === 0 && !filterValue)
+                    }
+                }</text>)
+            //.EditCellTemplate(new TemplateName("TagBoxTemplate"))
+            .Width(300);
+    columns.AddFor(m => m.SubClient)
+    .Lookup(lookup => lookup.DataSource(Model.AssignableSubClients));
+    columns.AddFor(m=>m.LastPasswordChangedDate).DataType(GridColumnDataType.Date).AllowHeaderFiltering(false);
+    columns.AddFor(m=>m.ResetPassword).DataType(GridColumnDataType.Boolean);
+    columns.AddFor(m=>m.Deactivated).DataType(GridColumnDataType.Boolean);
+    columns.AddFor(m => m.TemporaryPassword);
+})
+
+    .Editing(e => e.Mode(GridEditMode.Popup)
+        .AllowUpdating(true)
+        .AllowAdding(true)
+        .Popup(p => p
+            .Title("User Info")
+            .ShowTitle(true)
+            .Width(550)
+            .Height(650)
+            .Position(pos => pos
+                .My(HorizontalAlignment.Center, VerticalAlignment.Center)
+                .At(HorizontalAlignment.Center, VerticalAlignment.Center)
+                .Of(new JS("window"))
+            )
+        )
+        .Form(f => f.Items(items =>
+        {
+            items.AddSimpleFor(m => m.UserName);
+            items.AddSimpleFor(m => m.Email);
+            items.AddSimpleFor(m => m.FirstName);
+            items.AddSimpleFor(m => m.LastName);
+            items.AddSimpleFor(m => m.Roles)
+            .ColSpan(2)
+            .Editor(e => e
+                .TagBox()
+                .DataSource(d => d.Mvc().Controller("SubClientUserManagement").LoadAction("GetRoles"))
+                //.Value(new JS("value"))
+                .ShowSelectionControls(true)
+
+                .MaxDisplayedTags(3)
+                .ShowMultiTagOnly(false)
+                .ApplyValueMode(EditorApplyValueMode.UseButtons)
+                .SearchEnabled(true)
+            );
+
+            items.AddSimpleFor(m => m.SubClient)
+            .ColSpan(2)
+            .Editor(e => e
+                .SelectBox()
+                .DataSource(Model.AssignableSubClients)
+                .ShowSelectionControls(true)
+            );
+
+            items.AddEmpty();
+            items.AddGroup().ColSpan(1).ColCount(2).Items(groupItems =>
+            {
+                groupItems.AddSimpleFor(m => m.ResetPassword).Editor(e => e.Switch());
+                groupItems.AddSimpleFor(m => m.Deactivated).Editor(e => e.Switch());
+            });
+        }).ColCount(2))
+    )
+    //.OnRowDblClick("function(e) { e.component.editRow(e.dataIndex); }")
+    .OnRowInserted("function(e) { e.component.navigateToRow(e.key); }")
+    .OnKeyDown("PPG.userManagement.onKeyDown")
+)
+        @*@using (Html.DevExtreme().NamedTemplate("TagBoxTemplate"))
+        {
+            @(Html.DevExtreme().TagBox()
+                .DataSource(d => d.Mvc().Controller("SubClientUserManagement").LoadAction("GetRole"))
+                .Value(new JS("value"))
+                .ShowSelectionControls(true)
+                .MaxDisplayedTags(3)
+                .ShowMultiTagOnly(false)
+                .ApplyValueMode(EditorApplyValueMode.UseButtons)
+                .SearchEnabled(true)
+                .OnValueChanged("function(e) { setValue(e.value); }")
+                .OnSelectionChanged("function(e) { component.updateDimensions(); }")
+            )
+        }*@
+
+    </div>
+</div>
+
+
+@section Scripts {
+    <script src="~/js/ppg/ppg.user-management.bundle.min.js" asp-append-version="true"></script>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function documentReady() {
+            this.removeEventListener('DOMContentLoaded', documentReady);
+            PPG.userManagement.init();
+        });
+
+        function cellTemplate(container, options) {
+            var noBreakSpace = '\u00A0',
+                text = (options.value || []).map(element => {
+                    return options.column.lookup.calculateCellValue(element);
+                }).join(', ');
+            container.text(text || noBreakSpace).attr('title', text);
+        }
+    </script>
+}

@@ -1,0 +1,17 @@
+[
+  {
+    "ContainerName": "Bulletin",
+    "Folder": "CMOP",
+    "RoleAccess": "ClientFinancialWebUser"
+  },
+  {
+    "ContainerName": "Bulletin",
+    "Folder": "DALC",
+    "RoleAccess": "ClientFinancialWebUser"
+  },
+  {
+    "ContainerName": "Bulletin",
+    "Folder": "OPUS",
+    "RoleAccess": "ClientFinancialWebUser"  
+  }
+]

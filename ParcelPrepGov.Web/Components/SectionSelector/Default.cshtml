@@ -1,0 +1,7 @@
+﻿@model SectionSelectorModel
+<div >
+    <span>@Html.DropDownListFor(m => m.SelectedSite, Model.Sites)</span>
+    <span>@Html.DropDownListFor(m => m.SelectedClient, Model.Clients)</span>
+    <span>@Html.DropDownListFor(m => m.SelectedSubClient, Model.SubClients)</span>    
+</div>
+

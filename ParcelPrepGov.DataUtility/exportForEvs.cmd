@@ -1,0 +1,33 @@
+ParcelPrepGov.DataUtility.exe export sites "SELECT * FROM c WHERE c.siteName = 'CHARLESTON'"
+ParcelPrepGov.DataUtility.exe export subClients "SELECT * FROM c WHERE c.siteName = 'CHARLESTON'"
+
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'BINS' AND c.name = 'CHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'BINMAPS' AND c.name = 'CMOPCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'BINMAPS' AND c.name = 'OPUSCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'RATES' AND c.name = 'CMOPCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'RATES' AND c.name = 'OPUSCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'CONTAINERRATES' AND c.name = 'CHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'SERVICERULES' AND c.name = 'CMOPCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'SERVICERULES' AND c.name = 'OPUSCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = '48STATES' AND c.name = 'CMOPCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = '48STATES' AND c.name = 'OPUSCHARLESTON' ORDER BY c.startDate DESC"
+ParcelPrepGov.DataUtility.exe export activeGroups "SELECT TOP 1 * FROM c WHERE c.activeGroupType = 'ZONEMAPS' ORDER BY c.startDate DESC"
+
+ParcelPrepGov.DataUtility.exe export bins "SELECT * FROM c WHERE c.activeGroupId = '53aa4726-696c-4930-9d46-e0bc29eab29e'"
+ParcelPrepGov.DataUtility.exe export binMaps "SELECT * FROM c WHERE c.activeGroupId = '7546c766-68d3-4eee-956b-fc13b252cd46'"
+ParcelPrepGov.DataUtility.exe export binMaps "SELECT * FROM c WHERE c.activeGroupId = 'f89edb0d-5e3f-4fc6-a509-b50208d1e182'"
+ParcelPrepGov.DataUtility.exe export rates "SELECT * FROM c WHERE c.activeGroupId = 'a0e3725f-853b-4261-8aac-510b78fbbd66'"
+ParcelPrepGov.DataUtility.exe export rates "SELECT * FROM c WHERE c.activeGroupId = 'bf6a885a-2c5c-4a11-8256-a1097b6b1ecb'"
+ParcelPrepGov.DataUtility.exe export rates "SELECT * FROM c WHERE c.activeGroupId = '27af1880-1e15-4e4f-a6a2-78e3c1e48010'"
+ParcelPrepGov.DataUtility.exe export serviceRules "SELECT * FROM c WHERE c.activeGroupId = '27851a4a-ba82-4f55-82e0-5c8c984fae6a'"
+ParcelPrepGov.DataUtility.exe export serviceRules "SELECT * FROM c WHERE c.activeGroupId = '314727cb-ba2c-4020-96a9-fab0d873acb5'"
+ParcelPrepGov.DataUtility.exe export serviceRuleExtensions "SELECT * FROM c WHERE c.activeGroupId = 'a4c1909b-7b78-4369-8506-84b241b7c8dd'"
+REM ParcelPrepGov.DataUtility.exe export serviceRuleExtensions "SELECT * FROM c WHERE c.activeGroupId = '6790dcd1-5afe-4d32-a082-1bfec6529169'"
+ParcelPrepGov.DataUtility.exe export zoneMaps "SELECT * FROM c WHERE c.activeGroupId = 'c254d004-63b1-4e3b-b922-a85b1844e5a6'"
+
+ParcelPrepGov.DataUtility.exe export containers "SELECT * FROM c WHERE c.status = 'CLOSED' AND c.siteName = 'CHARLESTON' AND c.localProcessedDate >= '2022-04-06' AND  c.localProcessedDate < '2022-04-07'"
+ParcelPrepGov.DataUtility.exe export packages "SELECT * FROM c WHERE c.packageStatus = 'PROCESSED' AND c.siteName = 'CHARLESTON' AND c.localProcessedDate >= '2022-04-06' AND  c.localProcessedDate < '2022-04-07'"
+
+ParcelPrepGov.DataUtility.exe export eodContainers "SELECT * FROM c WHERE c.isContainerClosed = true AND c.partitionKey  = 'CHARLESTON20220406'"
+ParcelPrepGov.DataUtility.exe export eodPackages "SELECT * FROM c WHERE c.isPackageProcessed = true AND c.partitionKey  = 'CHARLESTON20220406'"
+

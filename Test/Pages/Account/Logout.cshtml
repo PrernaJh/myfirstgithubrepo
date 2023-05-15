@@ -1,0 +1,26 @@
+﻿@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Logout";
+    Layout = null;
+}
+<head>
+    <link href="~/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+    <link href="~/css/sb-admin.css" rel="stylesheet">
+    <link href="~/css/site.css" rel="stylesheet">
+</head>
+
+<body class="background-img-globe">
+    <div class="container">
+        <div class="card card-login mx-auto mt-5">
+            <div class="card-header">
+                <h6>Package Tracker Web Portal</h6>
+            </div>
+            <div class="card-body">
+                <p>You have successfully logged out.</p>
+            </div>
+            <a href="@Url.Action("Index","Home")" class="btn btn-secondary active mx-4" role="button" aria-pressed="true">Return to Login</a>
+            <br />
+        </div>
+    </div>
+</body>
