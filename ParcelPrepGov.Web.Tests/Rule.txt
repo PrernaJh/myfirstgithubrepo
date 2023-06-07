@@ -1,3 +1,0 @@
-
-  { "MemberName":"Folder","Operator":"Equal","TargetValue":"CMOP"}
-

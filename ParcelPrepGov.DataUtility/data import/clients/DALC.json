@@ -1,7 +1,0 @@
-﻿{
-  "name": "DALC",
-  "description": "DALC Client",
-  "recurlyAccountId": "F000020000000",
-  "isEnabled": true,
-  "partitionKey": "none"
-}

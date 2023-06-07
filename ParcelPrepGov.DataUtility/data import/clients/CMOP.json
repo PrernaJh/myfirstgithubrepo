@@ -1,7 +1,0 @@
-﻿{
-  "name": "CMOP",
-  "description": "CMOP Client",
-  "recurlyAccountId": "F000010000000",
-  "isEnabled": true,
-  "partitionKey": "none"
-}

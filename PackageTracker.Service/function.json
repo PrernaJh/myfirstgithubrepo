@@ -1,6 +1,0 @@
-﻿{
-  "schedule": "0 */1 * * * *",
-  "name": "returnAsnFileExportJobTimer",
-  "type": "timerTrigger",
-  "direction": "in"
-}
